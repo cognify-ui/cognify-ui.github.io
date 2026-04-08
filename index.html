@@ -17,7 +17,6 @@
     <meta name="twitter:description" content="Анализируй видео, аудио, изображения и документы бесплатно">
     <meta name="twitter:image" content="https://cognify-ui.github.io/og-image.png">
 
-    <!-- ОБЫЧНОЕ ОПИСАНИЕ ДЛЯ ПОИСКОВИКОВ -->
     <meta name="description" content="Cognify AI — бесплатная нейросеть. Анализируй видео, аудио, изображения, PDF. 4 AI модели. Без лимитов!">
     <meta name="google-site-verification" content="olsY_2GLIJ6iFROXlmFtMCVd5vQVg5YwSmQbohp8PE0" />
     <meta charset="UTF-8">
@@ -27,10 +26,6 @@
     <meta name="keywords" content="нейросеть, AI, контекст, диалог, бесплатно, Groq, Gemini, Cerebras">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#0a0a0a">
-    <meta name="author" content="Cognify AI">
-    <meta name="yandex" content="index, follow">
-    <meta name="bingbot" content="index, follow">
-
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
     
     <style>
@@ -41,6 +36,7 @@
             background: #0a0a0a;
             height: 100vh;
             overflow: hidden;
+            transition: background 0.2s ease;
         }
         
         @keyframes fadeIn {
@@ -61,7 +57,7 @@
             border-right: 1px solid #1f1f1f;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, background 0.2s;
         }
         
         .sidebar-header {
@@ -149,6 +145,7 @@
             display: flex;
             flex-direction: column;
             background: #0a0a0a;
+            transition: background 0.2s;
         }
         
         .chat-header {
@@ -163,9 +160,7 @@
         
         .chat-title { font-size: 18px; font-weight: 600; color: white; }
         
-        /* User Menu */
         .user-info { position: relative; }
-        
         .user-avatar {
             width: 36px;
             height: 36px;
@@ -178,7 +173,6 @@
             font-size: 14px;
             transition: transform 0.2s;
         }
-        
         .user-avatar:hover { transform: scale(1.05); }
         
         .user-menu {
@@ -193,9 +187,7 @@
             z-index: 100;
             display: none;
         }
-        
         .user-menu.show { display: block; }
-        
         .user-menu-item {
             padding: 10px 16px;
             color: #9ca3af;
@@ -204,12 +196,10 @@
             font-size: 14px;
             transition: all 0.2s;
         }
-        
         .user-menu-item:hover { background: #2a2a2a; color: white; }
         .user-menu-item:first-child { border-bottom: 1px solid #2a2a2a; margin-bottom: 4px; cursor: default; }
         .user-menu-item:first-child:hover { background: transparent; color: #9ca3af; }
         
-        /* API Selector */
         .api-selector {
             display: flex;
             gap: 8px;
@@ -218,7 +208,6 @@
             border-radius: 40px;
             flex-wrap: wrap;
         }
-        
         .api-btn {
             padding: 8px 16px;
             border-radius: 32px;
@@ -230,13 +219,11 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
         .api-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
         
-        /* Stats */
         .stats-badge {
             background: #1a1a1a;
             border-radius: 20px;
@@ -248,7 +235,6 @@
             gap: 6px;
         }
         
-        /* Messages */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -261,7 +247,6 @@
             margin-bottom: 24px;
             animation: fadeIn 0.3s ease;
         }
-        
         .message-avatar {
             width: 32px;
             height: 32px;
@@ -272,7 +257,6 @@
             font-size: 18px;
             flex-shrink: 0;
         }
-        
         .message.user .message-avatar { background: #2a2a2a; }
         .message.bot .message-avatar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         
@@ -282,7 +266,6 @@
             line-height: 1.6;
             font-size: 15px;
         }
-        
         .message-content pre {
             background: #1a1a1a;
             padding: 12px;
@@ -290,7 +273,6 @@
             overflow-x: auto;
             margin: 8px 0;
         }
-        
         .message-content code {
             background: #1a1a1a;
             padding: 2px 6px;
@@ -298,7 +280,6 @@
             font-family: monospace;
         }
         
-        /* Кнопка копирования - исправленная версия */
         .copy-btn {
             opacity: 0;
             background: #2a2a2a;
@@ -314,23 +295,9 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            line-height: 1;
         }
-        
-        .message.bot:hover .copy-btn {
-            opacity: 1;
-        }
-        
-        .copy-btn:hover {
-            background: #3a3a3a;
-            color: white;
-            border-color: #667eea;
-            transform: scale(1.02);
-        }
-        
-        .copy-btn:active {
-            transform: scale(0.98);
-        }
+        .message.bot:hover .copy-btn { opacity: 1; }
+        .copy-btn:hover { background: #3a3a3a; color: white; border-color: #667eea; transform: scale(1.02); }
         
         .message-content-wrapper {
             display: flex;
@@ -338,18 +305,12 @@
             gap: 8px;
             flex: 1;
         }
+        .message-text { flex: 1; min-width: 0; }
         
-        .message-text {
-            flex: 1;
-            min-width: 0; /* Для корректного переноса текста */
-        }
-        
-        /* Input */
         .input-area {
             padding: 20px 24px;
             border-top: 1px solid #1f1f1f;
         }
-        
         .input-container {
             display: flex;
             gap: 12px;
@@ -359,7 +320,6 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        
         textarea {
             flex: 1;
             background: transparent;
@@ -372,10 +332,9 @@
             padding: 8px 0;
             max-height: 120px;
         }
-        
         textarea::placeholder { color: #4a4a4a; }
         
-        .file-label, .image-label {
+        .file-label, .image-label, .clear-input-btn {
             background: #2a2a2a;
             border-radius: 50%;
             width: 36px;
@@ -387,12 +346,10 @@
             font-size: 18px;
             transition: all 0.2s;
         }
-        
-        .file-label:hover, .image-label:hover {
+        .file-label:hover, .image-label:hover, .clear-input-btn:hover {
             background: #3a3a3a;
             transform: scale(1.05);
         }
-        
         .send-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -402,7 +359,6 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
         .send-btn:hover { opacity: 0.9; transform: scale(0.98); }
         
         .loading {
@@ -415,7 +371,6 @@
             animation: spin 0.6s linear infinite;
         }
         
-        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -431,9 +386,7 @@
             visibility: hidden;
             transition: all 0.3s;
         }
-        
         .modal.show { opacity: 1; visibility: visible; }
-        
         .modal-content {
             background: #1a1a1a;
             border-radius: 24px;
@@ -442,7 +395,6 @@
             width: 90%;
             border: 1px solid #2a2a2a;
         }
-        
         .modal-content h2 { color: white; margin-bottom: 20px; text-align: center; }
         .modal-content input {
             width: 100%;
@@ -485,6 +437,37 @@
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 3px; }
         
+        /* Light theme overrides */
+        body.light-theme,
+        body.light-theme .main-chat { background: #f5f5f5; }
+        body.light-theme .sidebar { background: #e5e5e5; border-color: #ccc; }
+        body.light-theme .sidebar-header,
+        body.light-theme .chat-header,
+        body.light-theme .input-area { border-color: #ddd; }
+        body.light-theme .chat-title,
+        body.light-theme .logo,
+        body.light-theme .history-item,
+        body.light-theme .message-content { color: #111; }
+        body.light-theme .history-item:hover,
+        body.light-theme .history-item.active { background: #d0d0d0; color: #000; }
+        body.light-theme .api-selector,
+        body.light-theme .stats-badge,
+        body.light-theme .input-container,
+        body.light-theme .message-content pre,
+        body.light-theme .message-content code,
+        body.light-theme .user-menu,
+        body.light-theme .modal-content { background: #fff; color: #111; border-color: #ccc; }
+        body.light-theme textarea { color: #111; }
+        body.light-theme textarea::placeholder { color: #888; }
+        body.light-theme .copy-btn,
+        body.light-theme .file-label,
+        body.light-theme .image-label,
+        body.light-theme .clear-input-btn { background: #e0e0e0; color: #333; border-color: #ccc; }
+        body.light-theme .copy-btn:hover { background: #ccc; }
+        body.light-theme .lang-switch,
+        body.light-theme .theme-switch { background: #e0e0e0; color: #111; border-color: #bbb; }
+        body.light-theme .toast { background: #fff; color: #111; border-color: #667eea; }
+        
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -497,12 +480,7 @@
             .menu-toggle { display: block; }
             .api-selector { order: 2; width: 100%; justify-content: center; }
             .stats-badge { order: 1; }
-            .copy-btn {
-                padding: 4px 8px;
-                font-size: 12px;
-            }
         }
-        
         .menu-toggle {
             display: none;
             background: #1a1a1a;
@@ -513,9 +491,9 @@
             padding: 8px;
             border-radius: 8px;
         }
-        
         .header-left { display: flex; align-items: center; gap: 12px; }
         .header-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .clear-input-btn { background: #2a2a2a; border: none; cursor: pointer; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -583,6 +561,7 @@
                     <label for="fileInput" class="file-label" id="fileLabel" style="display: none;">📎</label>
                     <input type="file" id="fileInput" accept="image/*,video/*,audio/*,.pdf,.txt" style="display: none;">
                     <textarea id="userInput" placeholder="Напиши свой вопрос..." rows="1"></textarea>
+                    <button class="clear-input-btn" id="clearInputBtn" title="Очистить">✖</button>
                     <button class="send-btn" id="sendBtn">Отправить</button>
                 </div>
             </div>
@@ -670,20 +649,17 @@
         }
         
         // ============================================
-        // ТЕМА
+        // ТЕМА (улучшена)
         // ============================================
         function toggleTheme() {
             currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
             localStorage.setItem('theme', currentTheme);
+            const body = document.body;
             if (currentTheme === 'light') {
-                document.body.style.background = '#f5f5f5';
-                document.querySelector('.main-chat').style.background = '#f5f5f5';
-                document.querySelector('.sidebar').style.background = '#e5e5e5';
+                body.classList.add('light-theme');
                 document.getElementById('themeBtn').innerHTML = '☀️';
             } else {
-                document.body.style.background = '#0a0a0a';
-                document.querySelector('.main-chat').style.background = '#0a0a0a';
-                document.querySelector('.sidebar').style.background = '#0f0f0f';
+                body.classList.remove('light-theme');
                 document.getElementById('themeBtn').innerHTML = '🌙';
             }
         }
@@ -931,51 +907,41 @@
         }
         
         // ============================================
-        // КОПИРОВАНИЕ ТЕКСТА
+        // КОПИРОВАНИЕ ТЕКСТА (унифицировано)
         // ============================================
         function copyMessageText(elementId) {
             const element = document.getElementById(elementId);
             if (!element) return;
             
-            // Получаем чистый текст без HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = element.innerHTML;
             const textToCopy = tempDiv.textContent || tempDiv.innerText;
-            
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    showToast('📋 Ответ скопирован!');
-                }).catch(() => {
-                    copyTextFallback(textToCopy);
-                });
-            } else {
-                copyTextFallback(textToCopy);
-            }
+            copyToClipboard(textToCopy);
         }
         
         function copyMessageFromElement(button) {
             const wrapper = button.closest('.message-content-wrapper');
             if (wrapper) {
                 const textDiv = wrapper.querySelector('.message-text');
-                if (textDiv) {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = textDiv.innerHTML;
-                    const textToCopy = tempDiv.textContent || tempDiv.innerText;
-                    
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        navigator.clipboard.writeText(textToCopy).then(() => {
-                            showToast('📋 Ответ скопирован!');
-                        }).catch(() => {
-                            copyTextFallback(textToCopy);
-                        });
-                    } else {
-                        copyTextFallback(textToCopy);
-                    }
+                if (textDiv && textDiv.id) {
+                    copyMessageText(textDiv.id);
                 }
             }
         }
         
-        function copyTextFallback(text) {
+        function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('📋 Ответ скопирован!');
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+        
+        function fallbackCopy(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
             textarea.style.position = 'fixed';
@@ -992,7 +958,7 @@
         }
         
         // ============================================
-        // ОТПРАВКА С КОНТЕКСТОМ
+        // ОТПРАВКА С КОНТЕКСТОМ (улучшена обработка ошибок)
         // ============================================
         function updateFileButtons() {
             const imageLabel = document.getElementById('imageLabel');
@@ -1027,7 +993,7 @@
             const question = input.value.trim();
             if (!question && !currentImageFile && !currentUploadFile) return;
             
-            let userMsg = question || 'Анализ';
+            let userMsg = question || (currentLang === 'ru' ? 'Анализ' : 'Analysis');
             if (currentImageFile) userMsg += `\n\n🖼️ ${currentImageFile.name}`;
             if (currentUploadFile && currentApi === 'gemini') userMsg += `\n\n📎 ${currentUploadFile.name}`;
             
@@ -1036,9 +1002,10 @@
             input.style.height = 'auto';
             
             const chat = chats[currentChatId];
+            if (!chat) return;
+            
             const conversationHistory = [];
             const lastMessages = chat.messages.slice(-15);
-            
             for (const msg of lastMessages) {
                 if (msg.role === 'user') {
                     conversationHistory.push({ role: 'user', content: msg.content });
@@ -1046,7 +1013,6 @@
                     conversationHistory.push({ role: 'assistant', content: msg.content });
                 }
             }
-            
             conversationHistory.push({ role: 'user', content: question || (currentLang === 'ru' ? 'Проанализируй' : 'Analyze') });
             
             const loadingId = 'loading-' + Date.now();
@@ -1066,8 +1032,11 @@
                 else if (currentApi === 'gemini' && currentUploadFile) {
                     const formData = new FormData();
                     formData.append('file', currentUploadFile);
-                    formData.append('question', question || 'Опиши этот файл');
-                    const response = await fetch(`${WORKER_URL}/upload`, { method: 'POST', body: formData });
+                    formData.append('question', question || (currentLang === 'ru' ? 'Опиши этот файл' : 'Describe this file'));
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 60000);
+                    const response = await fetch(`${WORKER_URL}/upload`, { method: 'POST', body: formData, signal: controller.signal });
+                    clearTimeout(timeoutId);
                     const data = await response.json();
                     answer = data.answer || data.error || 'Error';
                     currentUploadFile = null;
@@ -1083,6 +1052,8 @@
                         document.getElementById('imageInput').value = '';
                     }
                     
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 60000);
                     const response = await fetch(`${WORKER_URL}/chat`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1091,13 +1062,15 @@
                             api: currentApi,
                             imageBase64: imageBase64,
                             imageMime: imageMime
-                        })
+                        }),
+                        signal: controller.signal
                     });
+                    clearTimeout(timeoutId);
                     const data = await response.json();
                     answer = data.answer || data.error || 'Error';
                 }
             } catch (err) {
-                answer = `❌ Ошибка: ${err.message}`;
+                answer = `❌ Ошибка: ${err.name === 'AbortError' ? 'Таймаут запроса' : err.message}`;
             }
             
             document.getElementById(loadingId)?.remove();
@@ -1111,86 +1084,32 @@
             shareChatId = chatId;
             const chat = chats[chatId];
             if (!chat) return;
-            
             const shareUrl = window.location.origin + window.location.pathname + '?share=' + chatId;
-            
             const input = document.getElementById('shareLinkInput');
             if (input) {
                 input.value = shareUrl;
-                input.style.display = 'block';
                 input.disabled = false;
             }
-            
             document.getElementById('shareModal').classList.add('show');
             toggleUserMenu();
         }
         
-        function closeShareModal() { 
-            document.getElementById('shareModal').classList.remove('show'); 
-        }
+        function closeShareModal() { document.getElementById('shareModal').classList.remove('show'); }
         
         function getChatText() {
             const chat = chats[shareChatId];
             return chat ? chat.messages.map(m => `${m.role === 'user' ? '👤' : '🧠'}: ${m.content}`).join('\n\n') : '';
         }
         
-        function shareToTelegram() { 
-            window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(getChatText())}`, '_blank'); 
-        }
+        function shareToTelegram() { window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(getChatText())}`, '_blank'); }
+        function shareToWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(getChatText())}`, '_blank'); }
+        function shareToVK() { window.open(`https://vk.com/share.php?url=${encodeURIComponent(window.location.href)}&title=Cognify%20AI&description=${encodeURIComponent(getChatText())}`, '_blank'); }
+        function shareToTwitter() { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getChatText())}`, '_blank'); }
         
-        function shareToWhatsApp() { 
-            window.open(`https://wa.me/?text=${encodeURIComponent(getChatText())}`, '_blank'); 
-        }
-        
-        function shareToVK() { 
-            window.open(`https://vk.com/share.php?url=${encodeURIComponent(window.location.href)}&title=Cognify%20AI&description=${encodeURIComponent(getChatText())}`, '_blank'); 
-        }
-        
-        function shareToTwitter() { 
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getChatText())}`, '_blank'); 
-        }
-        
-        function copyChatLink() { 
+        function copyChatLink() {
             const input = document.getElementById('shareLinkInput');
-            if (!input) {
-                showToast('❌ Ошибка: поле не найдено', true);
-                return;
-            }
-            
-            const link = input.value;
-            if (!link) {
-                showToast('❌ Нет ссылки для копирования', true);
-                return;
-            }
-            
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(link).then(() => {
-                    showToast('🔗 Ссылка скопирована!');
-                }).catch(() => {
-                    copyFallback(link);
-                });
-            } else {
-                copyFallback(link);
-            }
-        }
-        
-        function copyFallback(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.top = '-9999px';
-            textarea.style.left = '-9999px';
-            document.body.appendChild(textarea);
-            textarea.select();
-            textarea.setSelectionRange(0, 99999);
-            
-            try {
-                document.execCommand('copy');
-                showToast('🔗 Ссылка скопирована!');
-            } catch (err) {
-                showToast('❌ Не удалось скопировать', true);
-            }
-            document.body.removeChild(textarea);	
+            if (!input || !input.value) { showToast('❌ Нет ссылки для копирования', true); return; }
+            copyToClipboard(input.value);
         }
         
         // ============================================
@@ -1209,6 +1128,12 @@
         document.getElementById('fileInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) { currentUploadFile = file; saveAndAddMessage(`📎 Файл: ${file.name}`, false); }
+        });
+        
+        // Кнопка очистки поля ввода
+        document.getElementById('clearInputBtn').addEventListener('click', () => {
+            document.getElementById('userInput').value = '';
+            document.getElementById('userInput').style.height = 'auto';
         });
         
         const textarea = document.getElementById('userInput');
@@ -1231,19 +1156,17 @@
         if (savedLang) currentLang = savedLang;
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) { currentTheme = savedTheme; toggleTheme(); }
+        else toggleTheme(); // применить тему по умолчанию (dark)
         
         updateUserUI();
         loadUserData();
         updateFileButtons();
         
-        console.log('Cognify AI — с контекстом диалога! AI помнит весь разговор!');
-        
-        // Автоматический пинг поисковиков
+        // Автоматический пинг поисковиков (необязательно)
         function pingSearchEngines() {
             const url = encodeURIComponent('https://cognify-ui.github.io');
             fetch('https://www.google.com/ping?sitemap=' + url + '/sitemap.xml').catch(e => console.log('Google ping error:', e));
             fetch('https://www.bing.com/ping?sitemap=' + url + '/sitemap.xml').catch(e => console.log('Bing ping error:', e));
-            console.log('🔔 Поисковики уведомлены об обновлении сайта');
         }
         setTimeout(pingSearchEngines, 3000);
     </script>
