@@ -1145,8 +1145,10 @@
                 showToast('❌ Не удалось скопировать', true);
             }
             
-            document.body.removeChild(textarea);
-			        // Копирование текста сообщения
+                document.body.removeChild(textarea);
+        }
+        
+			// Копирование текста сообщения
         function copyMessageText(elementId) {
             const element = document.getElementById(elementId);
             if (!element) return;
