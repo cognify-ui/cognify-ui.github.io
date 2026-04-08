@@ -93,35 +93,26 @@
     </div>
     
     <script>
-        const WORKER_URL = 'https://cognify-backend.твой-аккаунт.workers.dev';
-        
-        async function login() {
-            const username = document.getElementById('username').value;
+        function login() {
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             
-            const response = await fetch(`${WORKER_URL}/api/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
             
-            const data = await response.json();
-            
-            if (data.error) {
-                const errorDiv = document.getElementById('error');
-                errorDiv.innerText = data.error;
-                errorDiv.style.display = 'block';
+            if (users[username] && users[username] === password) {
+                localStorage.setItem('currentUser', username);
+                window.location.href = '/';
             } else {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('username', data.username);
-                window.location.href = '/index.html';
+                const errorDiv = document.getElementById('error');
+                errorDiv.innerText = 'Неверное имя пользователя или пароль';
+                errorDiv.style.display = 'block';
             }
         }
         
-        document.getElementById('username').addEventListener('keypress', (e) => {
+        document.getElementById('username').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') login();
         });
-        document.getElementById('password').addEventListener('keypress', (e) => {
+        document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') login();
         });
     </script>
