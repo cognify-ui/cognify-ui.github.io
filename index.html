@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognify AI | Безлимитная нейросеть</title>
+    <title>Cognify AI | Multilingual AI Assistant</title>
+    <meta name="description" content="Бесплатная нейросеть с поддержкой файлов, видео, аудио и истории чатов">
     <style>
         * {
             margin: 0;
@@ -18,10 +19,21 @@
             overflow: hidden;
         }
         
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3a3a3a;
+            border-radius: 3px;
+        }
+        
         .app {
             display: flex;
             height: 100vh;
-            background: #0a0a0a;
         }
         
         /* Sidebar */
@@ -36,6 +48,9 @@
         .sidebar-header {
             padding: 20px;
             border-bottom: 1px solid #1f1f1f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .logo {
@@ -49,8 +64,21 @@
             gap: 8px;
         }
         
-        .logo span {
-            font-size: 24px;
+        .lang-switch {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .lang-switch:hover {
+            background: #2a2a2a;
+            border-color: #667eea;
         }
         
         .new-chat-btn {
@@ -82,17 +110,17 @@
         }
         
         .history-item {
-            padding: 12px;
+            padding: 10px 12px;
             border-radius: 8px;
             margin-bottom: 4px;
             cursor: pointer;
             color: #9ca3af;
-            font-size: 14px;
+            font-size: 13px;
             transition: all 0.2s;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            word-break: break-word;
+            align-items: center;
+            gap: 8px;
         }
         
         .history-item:hover {
@@ -105,20 +133,37 @@
             color: white;
         }
         
-        .delete-chat {
+        .history-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .history-actions {
+            display: flex;
+            gap: 4px;
             opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .history-item:hover .history-actions {
+            opacity: 1;
+        }
+        
+        .history-btn {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
             cursor: pointer;
             padding: 4px;
             border-radius: 4px;
             font-size: 12px;
         }
         
-        .history-item:hover .delete-chat {
-            opacity: 1;
-        }
-        
-        .delete-chat:hover {
+        .history-btn:hover {
             background: #2a2a2a;
+            color: white;
         }
         
         /* Main Chat */
@@ -152,7 +197,6 @@
             background: #1a1a1a;
             padding: 6px;
             border-radius: 40px;
-            flex-wrap: wrap;
         }
         
         .api-btn {
@@ -169,54 +213,6 @@
         
         .api-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .user-menu {
-            position: absolute;
-            top: 60px;
-            right: 24px;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            border-radius: 12px;
-            padding: 8px;
-            min-width: 180px;
-            display: none;
-            z-index: 100;
-        }
-        
-        .user-menu.show {
-            display: block;
-        }
-        
-        .user-menu-item {
-            padding: 10px 16px;
-            color: #9ca3af;
-            cursor: pointer;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        
-        .user-menu-item:hover {
-            background: #2a2a2a;
             color: white;
         }
         
@@ -266,7 +262,7 @@
         }
         
         .message-content p {
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         
         .message-content pre {
@@ -277,14 +273,7 @@
             margin: 8px 0;
         }
         
-        .message-content code {
-            background: #1a1a1a;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-        
-        /* Input */
+        /* Input Area */
         .input-area {
             padding: 20px 24px;
             border-top: 1px solid #1f1f1f;
@@ -296,7 +285,7 @@
             background: #1a1a1a;
             border-radius: 32px;
             padding: 8px 16px;
-            align-items: flex-end;
+            align-items: center;
         }
         
         textarea {
@@ -309,11 +298,28 @@
             resize: none;
             outline: none;
             padding: 8px 0;
-            max-height: 150px;
+            max-height: 120px;
         }
         
         textarea::placeholder {
             color: #4a4a4a;
+        }
+        
+        .file-label {
+            background: #2a2a2a;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        
+        .file-label:hover {
+            background: #3a3a3a;
         }
         
         .send-btn {
@@ -346,52 +352,110 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
+        .file-badge {
+            display: inline-block;
+            background: #2a2a2a;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 8px;
         }
         
-        ::-webkit-scrollbar-track {
+        /* Modal for Share */
+        .share-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .share-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .share-content {
             background: #1a1a1a;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #2a2a2a;
         }
         
-        ::-webkit-scrollbar-thumb {
-            background: #3a3a3a;
-            border-radius: 3px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4a4a4a;
-        }
-        
-        /* Mobile */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: -280px;
-                z-index: 1000;
-                height: 100vh;
-                transition: left 0.3s;
-            }
-            
-            .sidebar.open {
-                left: 0;
-            }
-            
-            .menu-toggle {
-                display: block;
-            }
-        }
-        
-        .menu-toggle {
-            display: none;
-            background: #1a1a1a;
-            border: none;
+        .share-content h3 {
             color: white;
-            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .share-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .share-buttons button {
+            background: #2a2a2a;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: white;
             cursor: pointer;
-            padding: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .share-buttons button:hover {
+            background: #3a3a3a;
+        }
+        
+        .share-link {
+            background: #0f0f0f;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .share-link input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            font-size: 12px;
+            outline: none;
+        }
+        
+        .share-link button {
+            background: #667eea;
+            border: none;
             border-radius: 8px;
+            padding: 6px 12px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .close-modal {
+            width: 100%;
+            background: #2a2a2a;
+            border: none;
+            border-radius: 12px;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            margin-top: 16px;
         }
     </style>
 </head>
@@ -401,98 +465,186 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <span>🧠</span> Cognify AI
+                    <span>🧠</span> <span data-lang="logo">Cognify AI</span>
                 </div>
+                <button class="lang-switch" onclick="toggleLanguage()" id="langBtn">🇬🇧 EN</button>
             </div>
             <button class="new-chat-btn" onclick="createNewChat()">
-                ➕ Новый чат
+                <span>➕</span> <span data-lang="newChat">Новый чат</span>
             </button>
-            <div class="history-list" id="historyList">
-                <!-- История чатов будет здесь -->
-            </div>
+            <div class="history-list" id="historyList"></div>
         </div>
         
         <!-- Main Chat -->
         <div class="main-chat">
             <div class="chat-header">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
-                    <div class="chat-title" id="chatTitle">Новый чат</div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-                    <div class="api-selector" id="apiSelector">
-                        <button class="api-btn active" data-api="groq">🚀 Groq</button>
-                        <button class="api-btn" data-api="cloudflare">☁️ Cloudflare</button>
-                        <button class="api-btn" data-api="gemini">🤖 Gemini</button>
-                        <button class="api-btn" data-api="fallback">🔄 Fallback</button>
-                    </div>
-                    <div class="user-info">
-                        <div class="user-avatar" onclick="toggleUserMenu()">👤</div>
-                    </div>
+                <div class="chat-title" id="chatTitle">Новый чат</div>
+                <div class="api-selector" id="apiSelector">
+                    <button class="api-btn active" data-api="groq">🚀 Groq</button>
+                    <button class="api-btn" data-api="gemini">🤖 Gemini</button>
+                    <button class="api-btn" data-api="fallback">🔄 Fallback</button>
                 </div>
             </div>
             
             <div class="messages-area" id="messagesArea">
                 <div class="message bot">
                     <div class="message-avatar">🧠</div>
-                    <div class="message-content">
-                        <p>Привет! Я Cognify AI — твой бесплатный нейропомощник.</p>
-                        <p>У меня нет лимитов на запросы! 🔥</p>
-                        <p>Выбери API сверху и задай любой вопрос:</p>
-                        <ul style="margin-top: 10px; margin-left: 20px;">
-                            <li>🚀 <strong>Groq</strong> — самый быстрый</li>
-                            <li>☁️ <strong>Cloudflare</strong> — стабильный</li>
-                            <li>🤖 <strong>Gemini</strong> — мощный от Google</li>
-                            <li>🔄 <strong>Fallback</strong> — демо-режим (всегда работает)</li>
-                        </ul>
+                    <div class="message-content" id="welcomeMessage">
+                        <p>Привет! Я Cognify AI.</p>
+                        <p>• <strong>Groq</strong> — только текст (быстро)</p>
+                        <p>• <strong>Gemini</strong> — текст + 🖼️ 🎬 🎵 📄</p>
+                        <p>• <strong>Fallback</strong> — демо-режим</p>
                     </div>
                 </div>
             </div>
             
             <div class="input-area">
                 <div class="input-container">
+                    <label for="fileInput" class="file-label" id="fileLabel" style="display: none;">📎</label>
+                    <input type="file" id="fileInput" accept="image/*,video/*,audio/*,.pdf,.txt" style="display: none;">
                     <textarea id="userInput" placeholder="Напиши свой вопрос..." rows="1"></textarea>
-                    <button class="send-btn" id="sendBtn">Отправить</button>
+                    <button class="send-btn" id="sendBtn"><span data-lang="send">Отправить</span></button>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="user-menu" id="userMenu">
-        <div class="user-menu-item" onclick="clearAllHistory()">🗑️ Очистить историю</div>
-        <div class="user-menu-item" onclick="exportChats()">📥 Экспорт чатов</div>
-        <div class="user-menu-item" onclick="toggleTheme()">🌓 Сменить тему</div>
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-content">
+            <h3 id="shareTitle">Поделиться чатом</h3>
+            <div class="share-buttons">
+                <button onclick="shareToTelegram()">📱 Telegram</button>
+                <button onclick="shareToWhatsApp()">💬 WhatsApp</button>
+                <button onclick="shareToVK()">📘 VK</button>
+                <button onclick="shareToTwitter()">🐦 Twitter</button>
+                <button onclick="copyChatLink()">🔗 Копировать</button>
+            </div>
+            <div class="share-link">
+                <input type="text" id="shareLinkInput" readonly>
+                <button onclick="copyChatLink()">Копировать</button>
+            </div>
+            <button class="close-modal" onclick="closeShareModal()">Закрыть</button>
+        </div>
     </div>
 
     <script>
         // ============================================
-        // НАСТРОЙКИ (без лимитов!)
+        // НАСТРОЙКИ
         // ============================================
+        const WORKER_URL = 'https://groq-proxy.playgame8987.workers.dev';
+        
         let currentChatId = Date.now().toString();
         let currentApi = 'groq';
-        let currentUser = localStorage.getItem('currentUser') || 'Гость';
-        
-        // Загрузка чатов из localStorage
+        let currentLang = 'ru';
+        let currentFile = null;
         let chats = JSON.parse(localStorage.getItem('chats') || '{}');
+        let shareChatId = null;
         
-        // Инициализация
-        function init() {
-            if (!chats[currentChatId]) {
-                createNewChat();
+        // ============================================
+        // ПЕРЕВОДЫ
+        // ============================================
+        const translations = {
+            ru: {
+                logo: 'Cognify AI',
+                newChat: 'Новый чат',
+                send: 'Отправить',
+                placeholder: 'Напиши свой вопрос...',
+                welcome: 'Привет! Я Cognify AI.\n\n• <strong>Groq</strong> — только текст (быстро)\n• <strong>Gemini</strong> — текст + 🖼️ 🎬 🎵 📄\n• <strong>Fallback</strong> — демо-режим',
+                fileReady: 'Файл готов к отправке',
+                type: 'Тип',
+                size: 'Размер',
+                askQuestion: 'Напиши вопрос об этом файле',
+                error: 'Ошибка',
+                thinking: 'Думаю...',
+                switchedTo: 'Переключено на',
+                share: 'Поделиться',
+                delete: 'Удалить',
+                shareTitle: 'Поделиться чатом'
+            },
+            en: {
+                logo: 'Cognify AI',
+                newChat: 'New chat',
+                send: 'Send',
+                placeholder: 'Type your question...',
+                welcome: 'Hi! I\'m Cognify AI.\n\n• <strong>Groq</strong> — text only (fast)\n• <strong>Gemini</strong> — text + 🖼️ 🎬 🎵 📄\n• <strong>Fallback</strong> — demo mode',
+                fileReady: 'File ready to send',
+                type: 'Type',
+                size: 'Size',
+                askQuestion: 'Ask a question about this file',
+                error: 'Error',
+                thinking: 'Thinking...',
+                switchedTo: 'Switched to',
+                share: 'Share',
+                delete: 'Delete',
+                shareTitle: 'Share chat'
             }
-            renderHistory();
-            loadChat(currentChatId);
+        };
+        
+        function t(key) {
+            return translations[currentLang][key] || translations.ru[key] || key;
         }
         
-        // Создать новый чат
+        function updateLanguage() {
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                const key = el.dataset.lang;
+                if (key && translations[currentLang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[currentLang][key];
+                    } else {
+                        el.innerHTML = translations[currentLang][key];
+                    }
+                }
+            });
+            
+            const welcomeDiv = document.getElementById('welcomeMessage');
+            if (welcomeDiv) {
+                welcomeDiv.innerHTML = t('welcome');
+            }
+            
+            const textarea = document.getElementById('userInput');
+            if (textarea) textarea.placeholder = t('placeholder');
+            
+            document.getElementById('shareTitle').innerText = t('shareTitle');
+            document.getElementById('langBtn').innerHTML = currentLang === 'ru' ? '🇬🇧 EN' : '🇷🇺 RU';
+        }
+        
+        function toggleLanguage() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            localStorage.setItem('language', currentLang);
+            updateLanguage();
+        }
+        
+        // ============================================
+        // УПРАВЛЕНИЕ ЧАТАМИ
+        // ============================================
+        function init() {
+            const savedLang = localStorage.getItem('language');
+            if (savedLang) currentLang = savedLang;
+            updateLanguage();
+            
+            if (!chats[currentChatId]) createNewChat();
+            renderHistory();
+            loadChat(currentChatId);
+            updateFileButton();
+        }
+        
+        function updateFileButton() {
+            const fileLabel = document.getElementById('fileLabel');
+            if (currentApi === 'gemini') {
+                fileLabel.style.display = 'flex';
+            } else {
+                fileLabel.style.display = 'none';
+                currentFile = null;
+            }
+        }
+        
         function createNewChat() {
             currentChatId = Date.now().toString();
             chats[currentChatId] = {
                 id: currentChatId,
-                title: 'Новый чат',
-                messages: [
-                    { role: 'bot', content: 'Привет! Я Cognify AI. Задай любой вопрос! 🔥' }
-                ],
+                title: 'New chat',
+                messages: [{ role: 'bot', content: t('welcome') }],
                 createdAt: new Date().toISOString()
             };
             saveChats();
@@ -500,31 +652,22 @@
             loadChat(currentChatId);
         }
         
-        // Загрузить чат
         function loadChat(chatId) {
             currentChatId = chatId;
             const chat = chats[chatId];
             if (!chat) return;
             
             document.getElementById('chatTitle').innerText = chat.title;
-            
             const messagesArea = document.getElementById('messagesArea');
             messagesArea.innerHTML = '';
+            chat.messages.forEach(msg => addMessageToUI(msg.content, msg.role === 'user'));
             
-            chat.messages.forEach(msg => {
-                addMessageToUI(msg.content, msg.role === 'user');
-            });
-            
-            // Подсветка активного чата в истории
             document.querySelectorAll('.history-item').forEach(el => {
                 el.classList.remove('active');
-                if (el.dataset.id === chatId) {
-                    el.classList.add('active');
-                }
+                if (el.dataset.id === chatId) el.classList.add('active');
             });
         }
         
-        // Добавить сообщение в UI
         function addMessageToUI(text, isUser) {
             const messagesArea = document.getElementById('messagesArea');
             const messageDiv = document.createElement('div');
@@ -537,227 +680,218 @@
             messagesArea.scrollTop = messagesArea.scrollHeight;
         }
         
-        // Форматирование сообщения (поддержка markdown-like)
         function formatMessage(text) {
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/`(.*?)`/g, '<code>$1</code>')
-                .replace(/\n/g, '<br>');
+            return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
         }
         
-        // Сохранить сообщение в чат
         function saveMessage(text, isUser) {
             const chat = chats[currentChatId];
             if (!chat) return;
-            
             chat.messages.push({ role: isUser ? 'user' : 'bot', content: text });
-            
-            // Обновляем заголовок чата по первому сообщению
             if (chat.messages.length === 2 && isUser) {
                 chat.title = text.slice(0, 30) + (text.length > 30 ? '...' : '');
                 document.getElementById('chatTitle').innerText = chat.title;
             }
-            
             saveChats();
             renderHistory();
         }
         
-        // Сохранить все чаты
         function saveChats() {
             localStorage.setItem('chats', JSON.stringify(chats));
         }
         
-        // Отрисовать историю
         function renderHistory() {
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
-            
-            const sortedChats = Object.values(chats).sort((a, b) => 
-                new Date(b.createdAt) - new Date(a.createdAt)
-            );
-            
-            sortedChats.forEach(chat => {
+            const sorted = Object.values(chats).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            sorted.forEach(chat => {
                 const item = document.createElement('div');
-                item.className = 'history-item';
-                if (chat.id === currentChatId) item.classList.add('active');
+                item.className = 'history-item' + (chat.id === currentChatId ? ' active' : '');
                 item.dataset.id = chat.id;
                 item.innerHTML = `
-                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis;">${chat.title}</span>
-                    <span class="delete-chat" onclick="event.stopPropagation(); deleteChat('${chat.id}')">🗑️</span>
+                    <span class="history-title">${escapeHtml(chat.title)}</span>
+                    <div class="history-actions">
+                        <button class="history-btn" onclick="event.stopPropagation(); openShareModal('${chat.id}')" title="${t('share')}">🔗</button>
+                        <button class="history-btn" onclick="event.stopPropagation(); deleteChat('${chat.id}')" title="${t('delete')}">🗑️</button>
+                    </div>
                 `;
                 item.onclick = () => loadChat(chat.id);
                 historyList.appendChild(item);
             });
         }
         
-        // Удалить чат
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
         function deleteChat(chatId) {
             delete chats[chatId];
             saveChats();
-            
-            const remainingChats = Object.keys(chats);
-            if (remainingChats.length === 0) {
-                createNewChat();
-            } else {
-                loadChat(remainingChats[0]);
-            }
+            const remaining = Object.keys(chats);
+            if (remaining.length === 0) createNewChat();
+            else loadChat(remaining[0]);
             renderHistory();
         }
         
-        // Очистить всю историю
-        function clearAllHistory() {
-            if (confirm('Удалить все чаты?')) {
-                chats = {};
-                createNewChat();
-                renderHistory();
-                toggleUserMenu();
-            }
-        }
-        
-        // Экспорт чатов
-        function exportChats() {
-            const data = JSON.stringify(chats, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `cognify-chats-${new Date().toISOString()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            toggleUserMenu();
-        }
-        
-        // Отправка сообщения
+        // ============================================
+        // ОТПРАВКА СООБЩЕНИЙ
+        // ============================================
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const question = input.value.trim();
-            if (!question) return;
+            if (!question && !currentFile) return;
             
-            // Добавляем сообщение пользователя
-            addMessageToUI(question, true);
-            saveMessage(question, true);
+            let userMsg = question;
+            if (currentFile) userMsg += `\n\n📎 ${t('fileReady')}: ${currentFile.name} (${(currentFile.size / 1024 / 1024).toFixed(2)} MB)`;
+            addMessageToUI(userMsg, true);
+            saveMessage(userMsg, true);
+            
             input.value = '';
             input.style.height = 'auto';
             
-            // Показываем загрузку
             const loadingId = 'loading-' + Date.now();
             const messagesArea = document.getElementById('messagesArea');
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'message bot';
             loadingDiv.id = loadingId;
-            loadingDiv.innerHTML = `
-                <div class="message-avatar">🧠</div>
-                <div class="message-content"><div class="loading"></div> Думаю...</div>
-            `;
+            loadingDiv.innerHTML = `<div class="message-avatar">🧠</div><div class="message-content"><div class="loading"></div> ${t('thinking')}</div>`;
             messagesArea.appendChild(loadingDiv);
             messagesArea.scrollTop = messagesArea.scrollHeight;
             
-            // Получаем ответ в зависимости от выбранного API
-            let answer = await getAIResponse(question);
+            let answer;
+            try {
+                if (currentApi === 'groq') {
+                    const response = await fetch(`${WORKER_URL}/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: question, api: 'groq' })
+                    });
+                    const data = await response.json();
+                    answer = data.answer || data.error || t('error');
+                }
+                else if (currentApi === 'gemini' && currentFile) {
+                    const formData = new FormData();
+                    formData.append('file', currentFile);
+                    formData.append('question', question || t('askQuestion'));
+                    formData.append('api', 'gemini');
+                    const response = await fetch(`${WORKER_URL}/upload`, { method: 'POST', body: formData });
+                    const data = await response.json();
+                    answer = data.answer || data.error || t('error');
+                    currentFile = null;
+                    document.getElementById('fileInput').value = '';
+                }
+                else if (currentApi === 'gemini') {
+                    const response = await fetch(`${WORKER_URL}/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: question, api: 'gemini' })
+                    });
+                    const data = await response.json();
+                    answer = data.answer || data.error || t('error');
+                }
+                else {
+                    answer = `🔁 Fallback: "${question || 'File uploaded'}"\n\nChoose Groq or Gemini for real AI!`;
+                }
+            } catch (err) {
+                answer = `❌ ${t('error')}: ${err.message}`;
+            }
             
-            // Убираем загрузку
             document.getElementById(loadingId)?.remove();
-            
-            // Добавляем ответ
             addMessageToUI(answer, false);
             saveMessage(answer, false);
         }
         
-        // Получение ответа от API
-        async function getAIResponse(question) {
-            // Демо-ответы для Fallback (всегда работают)
-            const fallbackAnswers = [
-                `🤖 **Cognify AI** (Fallback)\n\nТвой вопрос: *"${question.slice(0, 100)}${question.length > 100 ? '...' : ''}"*\n\nЭто демо-режим, который работает всегда. Для полноценного AI подключи API ключи в настройках Worker!`,
-                `✨ **Cognify AI**\n\nСпасибо за вопрос! Сейчас я в демо-режиме. Ты можешь:\n\n1. Настроить Groq API (быстро)\n2. Подключить Cloudflare AI\n3. Использовать Google Gemini\n\nВсе API бесплатны!`,
-                `🧠 **Cognify AI**\n\nОтличный вопрос! У меня нет лимитов, так что спрашивай сколько угодно. А пока наслаждайся демо-режимом с быстрыми ответами!`
-            ];
-            
-            // Если выбран Fallback — сразу возвращаем демо-ответ
-            if (currentApi === 'fallback') {
-                return fallbackAnswers[Math.floor(Math.random() * fallbackAnswers.length)];
-            }
-            
-            // Для реальных API нужен Worker
-            const WORKER_URL = 'https://groq-proxy.playgame8987.workers.dev/chat';
-            
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message: question, 
-                        api: currentApi,
-                        systemPrompt: 'Ты Cognify AI — дружелюбный помощник. Отвечай на русском языке.'
-                    })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.answer) return data.answer;
-                }
-                throw new Error('API не ответил');
-            } catch (error) {
-                // Если Worker не настроен, используем Fallback
-                return `⚠️ **API ${currentApi.toUpperCase()} не подключен**\n\nЧтобы использовать этот API, нужно:\n\n1. Получить API ключ в сервисе\n2. Настроить Cloudflare Worker\n3. Вставить ключ в код Worker\n\nПока переключись на **Fallback** — он работает всегда и без лимитов! 🔄`;
-            }
-        }
-        
-        // Переключение API
+        // ============================================
+        // API SELECTOR
+        // ============================================
         function switchApi(api) {
             currentApi = api;
             document.querySelectorAll('.api-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.dataset.api === api) {
-                    btn.classList.add('active');
-                }
+                if (btn.dataset.api === api) btn.classList.add('active');
             });
+            updateFileButton();
+            const names = { groq: '🚀 Groq', gemini: '🤖 Gemini', fallback: '🔄 Fallback' };
+            const msg = `${t('switchedTo')} ${names[api]}`;
+            addMessageToUI(msg, false);
+            saveMessage(msg, false);
+        }
+        
+        // ============================================
+        // SHARE FUNCTIONS
+        // ============================================
+        function openShareModal(chatId) {
+            shareChatId = chatId;
+            const chat = chats[chatId];
+            if (!chat) return;
             
-            // Добавляем системное сообщение о смене API
-            const apiNames = {
-                groq: '🚀 Groq (быстрый)',
-                cloudflare: '☁️ Cloudflare AI',
-                gemini: '🤖 Google Gemini',
-                fallback: '🔄 Fallback (всегда работает)'
-            };
+            const chatText = chat.messages.map(m => `${m.role === 'user' ? '👤' : '🧠'}: ${m.content}`).join('\n\n');
+            const encoded = encodeURIComponent(chatText);
+            const shareUrl = `${window.location.origin}${window.location.pathname}?share=${chatId}`;
             
-            addMessageToUI(`🔄 Переключено на **${apiNames[api]}**\n\nТеперь все ответы будут через этот API.`, false);
+            document.getElementById('shareLinkInput').value = shareUrl;
+            document.getElementById('shareModal').classList.add('show');
         }
         
-        // Toggle sidebar (mobile)
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('show');
         }
         
-        // Toggle user menu
-        function toggleUserMenu() {
-            const menu = document.getElementById('userMenu');
-            menu.classList.toggle('show');
+        function getChatText() {
+            const chat = chats[shareChatId];
+            if (!chat) return '';
+            return chat.messages.map(m => `${m.role === 'user' ? '👤' : '🧠'}: ${m.content}`).join('\n\n');
         }
         
-        // Закрыть меню при клике вне
-        document.addEventListener('click', (e) => {
-            const menu = document.getElementById('userMenu');
-            const avatar = document.querySelector('.user-avatar');
-            if (menu && !menu.contains(e.target) && !avatar.contains(e.target)) {
-                menu.classList.remove('show');
-            }
+        function shareToTelegram() {
+            const text = encodeURIComponent(getChatText());
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${text}`, '_blank');
+        }
+        
+        function shareToWhatsApp() {
+            const text = encodeURIComponent(getChatText());
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+        
+        function shareToVK() {
+            const text = encodeURIComponent(getChatText());
+            window.open(`https://vk.com/share.php?url=${encodeURIComponent(window.location.href)}&title=Cognify%20AI&description=${text}`, '_blank');
+        }
+        
+        function shareToTwitter() {
+            const text = encodeURIComponent(getChatText());
+            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+        }
+        
+        function copyChatLink() {
+            const input = document.getElementById('shareLinkInput');
+            input.select();
+            document.execCommand('copy');
+            alert(currentLang === 'ru' ? 'Ссылка скопирована!' : 'Link copied!');
+        }
+        
+        // ============================================
+        // EVENTS
+        // ============================================
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.querySelectorAll('.api-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchApi(btn.dataset.api));
         });
         
-        // Смена темы (сохранение)
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            toggleUserMenu();
-        }
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            currentFile = file;
+            addMessageToUI(`📎 ${t('fileReady')}: **${file.name}**\n📁 ${t('type')}: ${file.type}\n📊 ${t('size')}: ${(file.size / 1024 / 1024).toFixed(2)} MB\n\n${t('askQuestion')}`, false);
+        });
         
-        // Auto-resize textarea
         const textarea = document.getElementById('userInput');
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
-        
-        // Enter to send
         textarea.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -765,26 +899,6 @@
             }
         });
         
-        // Send button
-        document.getElementById('sendBtn').addEventListener('click', sendMessage);
-        
-        // API selector
-        document.querySelectorAll('.api-btn').forEach(btn => {
-            btn.addEventListener('click', () => switchApi(btn.dataset.api));
-        });
-        
-        // Close sidebar on mobile when clicking outside
-        document.addEventListener('click', (e) => {
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.getElementById('menuToggle');
-            if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
-                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                    sidebar.classList.remove('open');
-                }
-            }
-        });
-        
-        // Инициализация
         init();
     </script>
 </body>
