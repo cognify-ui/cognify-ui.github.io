@@ -21,7 +21,7 @@
     <meta name="google-site-verification" content="olsY_2GLIJ6iFROXlmFtMCVd5vQVg5YwSmQbohp8PE0" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Cognify AI | Нейросеть с контекстом диалога</title>
+    <title>Cognify AI | Нейросеть с контекстом диалога + Новости AI</title>
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
     
     <style>
@@ -40,8 +40,23 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
         
         .app { display: flex; height: 100vh; animation: fadeIn 0.3s ease; }
@@ -54,6 +69,7 @@
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease, background 0.2s;
+            z-index: 100;
         }
         
         .sidebar-header {
@@ -86,23 +102,39 @@
         .lang-switch:hover, .theme-switch:hover {
             border-color: #667eea;
             background: #2a2a2a;
+            transform: scale(1.02);
         }
         
-        .new-chat-btn {
-            margin: 16px;
+        .new-chat-btn, .news-tab-btn {
+            margin: 8px 16px;
             padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
             border-radius: 12px;
-            color: white;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.3s;
+        }
+        
+        .new-chat-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+        
+        .news-tab-btn {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #9ca3af;
+        }
+        
+        .news-tab-btn:hover {
+            border-color: #667eea;
+            color: white;
+            transform: scale(0.98);
         }
         
         .new-chat-btn:hover { opacity: 0.9; transform: scale(0.98); }
@@ -125,10 +157,11 @@
             justify-content: space-between;
             align-items: center;
             gap: 8px;
+            animation: slideIn 0.2s ease;
         }
         
         .history-item:hover { background: #1a1a1a; color: white; }
-        .history-item.active { background: #1a1a1a; color: white; }
+        .history-item.active { background: #1a1a1a; color: white; border-left: 3px solid #667eea; }
         .history-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .history-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
         .history-item:hover .history-actions { opacity: 1; }
@@ -142,6 +175,7 @@
             flex-direction: column;
             background: #0a0a0a;
             transition: background 0.2s;
+            position: relative;
         }
         
         .chat-header {
@@ -182,8 +216,9 @@
             min-width: 200px;
             z-index: 100;
             display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        .user-menu.show { display: block; }
+        .user-menu.show { display: block; animation: fadeIn 0.2s ease; }
         .user-menu-item {
             padding: 10px 16px;
             color: #9ca3af;
@@ -217,6 +252,10 @@
         }
         .api-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .api-btn:hover:not(.active) {
+            background: #2a2a2a;
             color: white;
         }
         
@@ -256,7 +295,6 @@
         .message.user .message-avatar { background: #2a2a2a; }
         .message.bot .message-avatar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         
-        /* ГЛАВНОЕ ИСПРАВЛЕНИЕ: цвета текста для тёмной темы */
         .message-content,
         .message-text {
             color: #e5e7eb;
@@ -373,6 +411,7 @@
             animation: spin 0.6s linear infinite;
         }
         
+        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -396,6 +435,7 @@
             max-width: 400px;
             width: 90%;
             border: 1px solid #2a2a2a;
+            animation: fadeIn 0.3s ease;
         }
         .modal-content h2 { color: white; margin-bottom: 20px; text-align: center; }
         .modal-content input {
@@ -435,22 +475,229 @@
             animation: fadeIn 0.3s ease;
         }
         
+        /* НОВОСТНАЯ ЛЕНТА */
+        .news-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0a0a;
+            z-index: 50;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .news-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #1f1f1f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: #0a0a0a;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .news-header h2 {
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .news-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .news-action-btn {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .news-action-btn:hover {
+            border-color: #667eea;
+            color: white;
+            transform: scale(0.98);
+        }
+        
+        .news-list {
+            padding: 20px 24px;
+        }
+        
+        .news-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-3px);
+            border-color: #667eea;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        }
+        
+        .news-card h3 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .news-meta {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .news-summary {
+            color: #e5e7eb;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .news-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .news-tag {
+            background: #2a2a2a;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #667eea;
+        }
+        
+        .news-empty {
+            text-align: center;
+            padding: 60px;
+            color: #9ca3af;
+        }
+        
+        /* Модалка статьи */
+        .article-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .article-modal.show {
+            display: flex;
+        }
+        
+        .article-modal-content {
+            background: #1a1a1a;
+            border-radius: 24px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .close-article-modal {
+            position: sticky;
+            top: 0;
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            color: #9ca3af;
+            background: none;
+            border: none;
+            transition: color 0.2s;
+        }
+        
+        .close-article-modal:hover {
+            color: #ff6b6b;
+        }
+        
+        /* Скелетон загрузки */
+        .skeleton-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .skeleton-title {
+            height: 24px;
+            background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+            width: 70%;
+            margin-bottom: 12px;
+        }
+        
+        .skeleton-meta {
+            height: 16px;
+            background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+            width: 40%;
+            margin-bottom: 12px;
+        }
+        
+        .skeleton-text {
+            height: 14px;
+            background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .skeleton-text:last-child {
+            width: 60%;
+        }
+        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 3px; }
         
-        /* Light theme overrides — всё, включая текст сообщений */
+        /* Light theme overrides */
         body.light-theme,
-        body.light-theme .main-chat { background: #f5f5f5; }
+        body.light-theme .main-chat,
+        body.light-theme .news-container { background: #f5f5f5; }
         body.light-theme .sidebar { background: #e5e5e5; border-color: #ccc; }
         body.light-theme .sidebar-header,
         body.light-theme .chat-header,
-        body.light-theme .input-area { border-color: #ddd; }
+        body.light-theme .input-area,
+        body.light-theme .news-header { border-color: #ddd; }
         body.light-theme .chat-title,
         body.light-theme .logo,
         body.light-theme .history-item,
         body.light-theme .message-content,
-        body.light-theme .message-text { color: #111; }
+        body.light-theme .message-text,
+        body.light-theme .news-header h2 { color: #111; }
         body.light-theme .history-item:hover,
         body.light-theme .history-item.active { background: #d0d0d0; color: #000; }
         body.light-theme .api-selector,
@@ -459,17 +706,24 @@
         body.light-theme .message-content pre,
         body.light-theme .message-content code,
         body.light-theme .user-menu,
-        body.light-theme .modal-content { background: #fff; color: #111; border-color: #ccc; }
+        body.light-theme .modal-content,
+        body.light-theme .news-card,
+        body.light-theme .article-modal-content,
+        body.light-theme .skeleton-card { background: #fff; color: #111; border-color: #ccc; }
         body.light-theme textarea { color: #111; }
         body.light-theme textarea::placeholder { color: #888; }
         body.light-theme .copy-btn,
         body.light-theme .file-label,
         body.light-theme .image-label,
-        body.light-theme .clear-input-btn { background: #e0e0e0; color: #333; border-color: #ccc; }
+        body.light-theme .clear-input-btn,
+        body.light-theme .news-action-btn,
+        body.light-theme .news-tab-btn { background: #e0e0e0; color: #333; border-color: #ccc; }
         body.light-theme .copy-btn:hover { background: #ccc; }
         body.light-theme .lang-switch,
         body.light-theme .theme-switch { background: #e0e0e0; color: #111; border-color: #bbb; }
         body.light-theme .toast { background: #fff; color: #111; border-color: #667eea; }
+        body.light-theme .news-summary { color: #333; }
+        body.light-theme .news-tag { background: #e0e0e0; }
         
         @media (max-width: 768px) {
             .sidebar {
@@ -483,7 +737,10 @@
             .menu-toggle { display: block; }
             .api-selector { order: 2; width: 100%; justify-content: center; }
             .stats-badge { order: 1; }
+            .news-header { flex-direction: column; align-items: stretch; }
+            .news-actions { justify-content: center; }
         }
+        
         .menu-toggle {
             display: none;
             background: #1a1a1a;
@@ -494,9 +751,20 @@
             padding: 8px;
             border-radius: 8px;
         }
+        
         .header-left { display: flex; align-items: center; gap: 12px; }
         .header-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
         .clear-input-btn { background: #2a2a2a; border: none; cursor: pointer; font-size: 16px; }
+        
+        .badge-new {
+            background: #ff4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 <body>
@@ -510,6 +778,7 @@
                 </div>
             </div>
             <button class="new-chat-btn" onclick="createNewChat()">➕ Новый чат</button>
+            <button class="news-tab-btn" onclick="showNewsTab()">📰 Новости AI <span id="newsBadge" class="badge-new" style="display:none;">New</span></button>
             <div class="history-list" id="historyList"></div>
         </div>
         
@@ -551,6 +820,7 @@
                             <p>• 🎬 Видео — анализ, описание<br>• 🎵 Аудио — транскрипция, перевод<br>• 🖼️ Изображения — распознавание<br>• 📄 Документы — PDF, TXT</p>
                             <p><strong>🔥 Доступные AI модели:</strong><br>• 🚀 Groq — самый быстрый<br>• ⚡ Cerebras — 14,400 запросов/день<br>• ☁️ Cloudflare — глобальная сеть<br>• 🤖 Gemini — видео, аудио, изображения</p>
                             <p>💡 <strong>Для файлов:</strong> выбери Gemini и нажми 📎</p>
+                            <p>📰 <strong>Новости:</strong> Нажми «Новости AI» в меню, чтобы читать свежие новости мира ИИ</p>
                         </div>
                         <button class="copy-btn" onclick="copyMessageFromElement(this)">📋 Копировать</button>
                     </div>
@@ -566,6 +836,31 @@
                     <textarea id="userInput" placeholder="Напиши свой вопрос..." rows="1"></textarea>
                     <button class="clear-input-btn" id="clearInputBtn" title="Очистить">✖</button>
                     <button class="send-btn" id="sendBtn">Отправить</button>
+                </div>
+            </div>
+            
+            <!-- НОВОСТНОЙ КОНТЕЙНЕР -->
+            <div class="news-container" id="newsContainer">
+                <div class="news-header">
+                    <h2>📰 Новости искусственного интеллекта</h2>
+                    <div class="news-actions">
+                        <button class="news-action-btn" onclick="refreshNews()">🔄 Обновить</button>
+                        <button class="news-action-btn" onclick="closeNewsTab()">✖ Закрыть</button>
+                    </div>
+                </div>
+                <div class="news-list" id="newsList">
+                    <div class="skeleton-card">
+                        <div class="skeleton-title"></div>
+                        <div class="skeleton-meta"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text"></div>
+                    </div>
+                    <div class="skeleton-card">
+                        <div class="skeleton-title"></div>
+                        <div class="skeleton-meta"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -652,7 +947,7 @@
         }
         
         // ============================================
-        // ТЕМА (исправлена: теперь текст всегда читаем)
+        // ТЕМА
         // ============================================
         function toggleTheme() {
             currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -931,7 +1226,7 @@
         
         function copyToClipboard(text) {
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => showToast('📋 Ответ скопирован!'))
+                navigator.clipboard.writeText(text).then(() => showToast('📋 Скопировано!'))
                     .catch(() => fallbackCopy(text));
             } else {
                 fallbackCopy(text);
@@ -947,7 +1242,7 @@
             textarea.select();
             try {
                 document.execCommand('copy');
-                showToast('📋 Ответ скопирован!');
+                showToast('📋 Скопировано!');
             } catch (err) {
                 showToast('❌ Не удалось скопировать', true);
             }
@@ -1110,6 +1405,234 @@
         }
         
         // ============================================
+        // НОВОСТНАЯ ЛЕНТА
+        // ============================================
+        let allNews = [];
+        let newsLoading = false;
+        let lastNewsCount = 0;
+        
+        async function loadNews() {
+            if (newsLoading) return;
+            newsLoading = true;
+            
+            const newsListDiv = document.getElementById('newsList');
+            if (newsListDiv) {
+                newsListDiv.innerHTML = `
+                    <div class="skeleton-card"><div class="skeleton-title"></div><div class="skeleton-meta"></div><div class="skeleton-text"></div><div class="skeleton-text"></div></div>
+                    <div class="skeleton-card"><div class="skeleton-title"></div><div class="skeleton-meta"></div><div class="skeleton-text"></div><div class="skeleton-text"></div></div>
+                    <div class="skeleton-card"><div class="skeleton-title"></div><div class="skeleton-meta"></div><div class="skeleton-text"></div><div class="skeleton-text"></div></div>
+                `;
+            }
+            
+            try {
+                const response = await fetch('/news.json?t=' + Date.now());
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                
+                const data = await response.json();
+                allNews = data.articles || [];
+                
+                allNews.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+                
+                // Показываем бейдж NEW если есть новые статьи
+                if (allNews.length > lastNewsCount && lastNewsCount > 0) {
+                    const badge = document.getElementById('newsBadge');
+                    if (badge) badge.style.display = 'inline-block';
+                    setTimeout(() => {
+                        if (badge) badge.style.display = 'none';
+                    }, 5000);
+                }
+                lastNewsCount = allNews.length;
+                
+                renderNewsList();
+                
+            } catch (error) {
+                console.error('Ошибка загрузки новостей:', error);
+                if (newsListDiv) {
+                    newsListDiv.innerHTML = `
+                        <div class="news-empty">
+                            ⚠️ Не удалось загрузить новости.<br>
+                            Убедитесь, что файл <strong>news.json</strong> существует в корне сайта.<br><br>
+                            <button onclick="loadNews()" style="margin-top:20px;padding:10px 20px;background:#667eea;border:none;border-radius:12px;color:white;cursor:pointer;">🔄 Повторить</button>
+                        </div>
+                    `;
+                }
+            } finally {
+                newsLoading = false;
+            }
+        }
+        
+        function renderNewsList() {
+            const newsListDiv = document.getElementById('newsList');
+            if (!newsListDiv) return;
+            
+            if (allNews.length === 0) {
+                newsListDiv.innerHTML = '<div class="news-empty">📭 Новостей пока нет. Загляните позже!</div>';
+                return;
+            }
+            
+            newsListDiv.innerHTML = allNews.map(article => `
+                <div class="news-card" onclick="showFullArticle('${article.id}')">
+                    <h3>${escapeHtml(article.title)}</h3>
+                    <div class="news-meta">
+                        <span>📅 ${formatNewsDate(article.published_at)}</span>
+                        <span>🔗 ${escapeHtml(article.source || 'AI News')}</span>
+                    </div>
+                    <div class="news-summary">
+                        ${escapeHtml(article.summary || (article.content ? article.content.substring(0, 200) : ''))}...
+                    </div>
+                    <div class="news-tags">
+                        ${(article.tags || []).map(tag => `<span class="news-tag">#${escapeHtml(tag)}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showFullArticle(articleId) {
+            const article = allNews.find(a => a.id === articleId);
+            if (!article) return;
+            
+            let modal = document.getElementById('articleModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'articleModal';
+                modal.className = 'article-modal';
+                modal.innerHTML = `
+                    <div class="article-modal-content">
+                        <button class="close-article-modal" onclick="closeArticleModal()">✖</button>
+                        <div id="articleModalBody"></div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+            
+            const body = document.getElementById('articleModalBody');
+            body.innerHTML = `
+                <h2 style="color:#667eea;margin-bottom:16px;padding-right:30px;">${escapeHtml(article.title)}</h2>
+                <div class="news-meta" style="margin-bottom:20px;">
+                    <span>📅 ${formatNewsDate(article.published_at)}</span>
+                    <span>🔗 <a href="${escapeHtml(article.source_url)}" target="_blank" style="color:#667eea;">${escapeHtml(article.source || 'Источник')}</a></span>
+                </div>
+                <div style="line-height:1.7;color:inherit;">
+                    ${escapeHtml(article.content || article.summary || '').replace(/\n/g, '<br>')}
+                </div>
+                <div style="margin-top:24px;padding-top:16px;border-top:1px solid #2a2a2a;display:flex;gap:12px;flex-wrap:wrap;">
+                    <button onclick="shareNewsArticle('${article.id}')" style="background:#2a2a2a;border:none;padding:8px 16px;border-radius:20px;color:#667eea;cursor:pointer;">📤 Поделиться</button>
+                    <button onclick="copyNewsLink('${article.id}')" style="background:#2a2a2a;border:none;padding:8px 16px;border-radius:20px;color:#667eea;cursor:pointer;">🔗 Копировать ссылку</button>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+        
+        function closeArticleModal() {
+            const modal = document.getElementById('articleModal');
+            if (modal) modal.classList.remove('show');
+        }
+        
+        function shareNewsArticle(articleId) {
+            const article = allNews.find(a => a.id === articleId);
+            if (!article) return;
+            const text = `${article.title}\n\n${article.summary}\n\nЧитать полностью: ${window.location.origin}/?news=${articleId}`;
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${encodeURIComponent(text)}`, '_blank');
+        }
+        
+        function copyNewsLink(articleId) {
+            const url = `${window.location.origin}/?news=${articleId}`;
+            copyToClipboard(url);
+        }
+        
+        function formatNewsDate(isoString) {
+            if (!isoString) return 'Дата неизвестна';
+            const date = new Date(isoString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Только что';
+            if (diffMins < 60) return `${diffMins} мин назад`;
+            if (diffHours < 24) return `${diffHours} ч назад`;
+            if (diffDays < 7) return `${diffDays} дн назад`;
+            return date.toLocaleDateString('ru-RU');
+        }
+        
+        function showNewsTab() {
+            document.getElementById('messagesArea').style.display = 'none';
+            document.querySelector('.input-area').style.display = 'none';
+            document.getElementById('chatTitle').innerText = '📰 Новости AI';
+            
+            const newsContainer = document.getElementById('newsContainer');
+            if (newsContainer) {
+                newsContainer.style.display = 'block';
+            }
+            
+            loadNews();
+            
+            // Скрываем бейдж NEW
+            const badge = document.getElementById('newsBadge');
+            if (badge) badge.style.display = 'none';
+            
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
+        
+        function closeNewsTab() {
+            document.getElementById('messagesArea').style.display = 'block';
+            document.querySelector('.input-area').style.display = 'flex';
+            
+            const chat = chats[currentChatId];
+            document.getElementById('chatTitle').innerText = chat ? chat.title : 'Новый чат';
+            
+            const newsContainer = document.getElementById('newsContainer');
+            if (newsContainer) {
+                newsContainer.style.display = 'none';
+            }
+        }
+        
+        function refreshNews() {
+            loadNews();
+            showToast('🔄 Новости обновляются...');
+        }
+        
+        let autoRefreshInterval = null;
+        
+        function startAutoNewsRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(() => {
+                const newsContainer = document.getElementById('newsContainer');
+                if (newsContainer && newsContainer.style.display === 'block') {
+                    loadNews();
+                }
+            }, 10 * 60 * 1000);
+        }
+        
+        function handleUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const newsId = urlParams.get('news');
+            if (newsId) {
+                const waitForNews = setInterval(() => {
+                    if (allNews.length > 0) {
+                        clearInterval(waitForNews);
+                        const article = allNews.find(a => a.id === newsId);
+                        if (article) {
+                            showNewsTab();
+                            setTimeout(() => showFullArticle(newsId), 500);
+                        }
+                    }
+                }, 500);
+                setTimeout(() => clearInterval(waitForNews), 10000);
+            }
+            
+            const shareId = urlParams.get('share');
+            if (shareId && chats[shareId]) {
+                loadChat(shareId);
+                showToast('📎 Загружен чат по ссылке');
+            }
+        }
+        
+        // ============================================
         // UI СОБЫТИЯ
         // ============================================
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
@@ -1147,18 +1670,25 @@
             }
         });
         
-        // Инициализация
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================
         const savedLang = localStorage.getItem('language');
         if (savedLang) currentLang = savedLang;
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) { currentTheme = savedTheme; toggleTheme(); }
-        else toggleTheme(); // по умолчанию тёмная тема
+        else toggleTheme();
         
         updateUserUI();
         loadUserData();
         updateFileButtons();
+        startAutoNewsRefresh();
         
-        // Автоматический пинг поисковиков (необязательно)
+        setTimeout(() => {
+            handleUrlParams();
+        }, 1000);
+        
+        // Пинг поисковиков для SEO
         function pingSearchEngines() {
             const url = encodeURIComponent('https://cognify-ui.github.io');
             fetch('https://www.google.com/ping?sitemap=' + url + '/sitemap.xml').catch(e => console.log('Google ping error:', e));
