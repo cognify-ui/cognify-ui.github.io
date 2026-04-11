@@ -2,12 +2,13 @@
 # news_generator.py - Автоматический сбор и генерация новостей AI
 # Запуск: python news_generator.py
 
-import json
+mport json
 import os
 import requests
 from datetime import datetime
 from typing import List, Dict
 import hashlib
+import feedparser  # ЭТО ВАЖНО!
 
 # ============================================
 # КОНФИГУРАЦИЯ
