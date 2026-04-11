@@ -2,7 +2,7 @@
 # news_generator.py - Автоматический сбор и генерация новостей AI
 # Запуск: python news_generator.py
 
-mport json
+import json
 import os
 import requests
 from datetime import datetime
