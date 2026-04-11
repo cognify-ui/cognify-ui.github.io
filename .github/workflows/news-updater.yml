@@ -2,59 +2,33 @@ name: Автообновление новостей
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/20 * * * *'
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  update-news:
+  generate-news:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
-      - name: Клонирование репозитория
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
       
-      - name: Установка Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       
-      - name: Установка зависимостей
-        run: |
-          pip install requests feedparser
+      - run: pip install requests feedparser
       
-      - name: Запуск генератора новостей
-        run: python news_generator.py
+      - run: python news_generator.py
       
-      - name: Сохранение изменений (без конфликтов)
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Скачиваем последние изменения
-          git fetch origin main
-          
-          # Временно сохраняем наши изменения
-          git stash push --include-untracked -m "temp-news" || true
-          
-          # Переключаемся на последнюю версию
-          git checkout origin/main -B temp-branch
-          
-          # Возвращаем наши изменения
-          git stash pop || true
-          
-          # Добавляем изменения
           git add news.json
-          
-          # Если есть изменения - коммитим и пушим
-          if git diff --staged --quiet; then
-            echo "Нет изменений для коммита"
-          else
-            git commit -m "🤖 Автообновление новостей [skip ci]"
-            git push origin HEAD:main --force-with-lease
-          fi
+          git diff --staged --quiet || git commit -m "🤖 Автообновление новостей [skip ci]"
+          git pull --rebase --strategy-option=theirs origin main || true
+          git push origin main
