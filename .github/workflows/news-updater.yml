@@ -2,10 +2,11 @@ name: 🤖 Автообновление новостей Cognify AI
 
 on:
   schedule:
-    # ИСПРАВЛЕНО: используем "некруглое" время
-    - cron: '17 */1 * * *'  # Каждые 3 часа в 17 минут
-    - cron: '43 10,16,22 * * *'  # Дополнительно в 10:43, 16:43, 22:43
-  workflow_dispatch:  # ОБЯЗАТЕЛЬНО для ручного запуска
+    # Каждый час в 17 минут
+    - cron: '17 * * * *'
+    # Дополнительно в час пик (10:43, 15:43, 20:43)
+    - cron: '43 10,15,20 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -72,7 +73,6 @@ jobs:
             if git pull --rebase origin main && git push origin main; then
               echo "✅ Changes pushed successfully"
               break
-              
             fi
             sleep 5
           done
