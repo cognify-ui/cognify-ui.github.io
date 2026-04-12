@@ -19,14 +19,15 @@
             overflow: hidden;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         
         .app { display: flex; height: 100vh; background: rgba(245, 245, 245, 0.95); }
-        .sidebar { width: 300px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-right: 1px solid rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; transition: all 0.3s; z-index: 100; box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05); }
+        .sidebar { width: 300px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-right: 1px solid rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05); }
         .sidebar-header { padding: 24px 20px; border-bottom: 1px solid rgba(0, 0, 0, 0.06); display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo { font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
         .new-chat-btn, .news-tab-btn { margin: 8px 16px; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .new-chat-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3); }
         .new-chat-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
@@ -87,9 +88,9 @@
         .news-list { padding: 24px; }
         .news-card { background: white; border-radius: 20px; padding: 24px; margin-bottom: 20px; border: 1px solid rgba(0, 0, 0, 0.06); transition: all 0.3s; cursor: pointer; }
         .news-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); border-color: #667eea; }
-        .news-card h3 { color: #212529; font-size: 18px; font-weight: 600; margin-bottom: 12px; line-height: 1.4; }
+        .news-card h3 { color: #212529; font-size: 18px; font-weight: 600; margin-bottom: 12px; line-height: 1.4; cursor: pointer; }
         .news-meta { font-size: 12px; color: #6c757d; margin-bottom: 12px; display: flex; gap: 16px; flex-wrap: wrap; }
-        .news-summary { color: #495057; line-height: 1.6; margin-bottom: 16px; font-size: 14px; }
+        .news-summary { color: #495057; line-height: 1.6; margin-bottom: 16px; font-size: 14px; cursor: pointer; }
         .news-image { width: 100%; height: 200px; object-fit: cover; border-radius: 16px; margin-bottom: 16px; cursor: pointer; background: #f0f0f0; }
         .news-stats { display: flex; gap: 20px; margin: 16px 0; padding: 12px 0; border-top: 1px solid #e9ecef; border-bottom: 1px solid #e9ecef; }
         .news-stat { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6c757d; cursor: pointer; transition: all 0.2s; padding: 4px 8px; border-radius: 20px; }
@@ -156,20 +157,14 @@
 <body>
 <div class="app">
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">🧠 Cognify AI</div>
-        </div>
+        <div class="sidebar-header"><div class="logo">🧠 Cognify AI</div></div>
         <button class="new-chat-btn" id="newChatBtn">✨ Новый чат</button>
         <button class="news-tab-btn" id="newsTabBtn">📰 Новости AI <span id="newsBadge" class="badge-new" style="display:none;">New</span></button>
         <div class="history-list" id="historyList"></div>
     </div>
-
     <div class="main-chat">
         <div class="chat-header">
-            <div class="header-left">
-                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-                <div class="chat-title" id="chatTitle">Новый чат</div>
-            </div>
+            <div class="header-left"><button class="menu-toggle" onclick="toggleSidebar()">☰</button><div class="chat-title" id="chatTitle">Новый чат</div></div>
             <div class="header-right">
                 <div class="stats-badge" id="statsBadge">📊 <span id="statsCount">0</span></div>
                 <div class="language-selector" id="languageSelector"></div>
@@ -187,60 +182,18 @@
                 </div>
             </div>
         </div>
-
         <div class="messages-area" id="messagesArea">
-            <div class="message bot">
-                <div class="message-avatar">🧠</div>
-                <div class="message-content" id="welcomeMessage"></div>
-            </div>
+            <div class="message bot"><div class="message-avatar">🧠</div><div class="message-content" id="welcomeMessage"></div></div>
         </div>
-
-        <div class="input-area">
-            <div class="input-container">
-                <textarea id="userInput" placeholder="Напиши свой вопрос..." rows="1"></textarea>
-                <button class="send-btn" id="sendBtn">Отправить</button>
-            </div>
-        </div>
-
+        <div class="input-area"><div class="input-container"><textarea id="userInput" placeholder="Напиши свой вопрос..." rows="1"></textarea><button class="send-btn" id="sendBtn">Отправить</button></div></div>
         <div class="news-container" id="newsContainer">
-            <div class="news-header">
-                <h2 id="newsTitle">📰 Новости искусственного интеллекта</h2>
-                <div class="news-actions">
-                    <button class="news-action-btn" id="refreshNewsBtn">🔄 Обновить</button>
-                    <button class="news-action-btn" id="closeNewsBtn">✖ Закрыть</button>
-                </div>
-            </div>
+            <div class="news-header"><h2 id="newsTitle">📰 Новости искусственного интеллекта</h2><div class="news-actions"><button class="news-action-btn" id="refreshNewsBtn">🔄 Обновить</button><button class="news-action-btn" id="closeNewsBtn">✖ Закрыть</button></div></div>
             <div class="news-list" id="newsList"></div>
         </div>
     </div>
 </div>
-
-<div class="modal" id="authModal">
-    <div class="modal-content">
-        <h2 id="authTitle">🔐 Вход</h2>
-        <input type="text" id="authUsername" placeholder="Имя пользователя">
-        <input type="password" id="authPassword" placeholder="Пароль">
-        <button id="authSubmitBtn">Войти</button>
-        <div class="modal-switch" id="authSwitch">Нет аккаунта? Зарегистрироваться</div>
-    </div>
-</div>
-
-<div class="modal" id="shareModal">
-    <div class="modal-content">
-        <h3 id="shareTitle">📤 Поделиться чатом</h3>
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center;">
-            <button id="shareTelegramBtn" style="background:#f0f0f0; border:1px solid #e0e0e0; padding:10px 16px; border-radius:20px; cursor:pointer;">📱 Telegram</button>
-            <button id="shareWhatsAppBtn" style="background:#f0f0f0; border:1px solid #e0e0e0; padding:10px 16px; border-radius:20px; cursor:pointer;">💬 WhatsApp</button>
-            <button id="ShareVKBtn" style="background:#f0f0f0; border:1px solid #e0e0e0; padding:10px 16px; border-radius:20px; cursor:pointer;">📘 VK</button>
-            <button id="shareTwitterBtn" style="background:#f0f0f0; border:1px solid #e0e0e0; padding:10px 16px; border-radius:20px; cursor:pointer;">🐦 Twitter</button>
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="shareLinkInput" readonly style="flex:1; padding:10px; border-radius:12px; border:1px solid #e0e0e0;">
-            <button id="copyLinkBtn" style="background:#667eea; color:white; border:none; padding:10px 20px; border-radius:12px; cursor:pointer;">Копировать</button>
-        </div>
-        <button id="closeShareBtn" style="margin-top: 20px; background:#f0f0f0; border:1px solid #e0e0e0; padding:10px; border-radius:12px; cursor:pointer;">Закрыть</button>
-    </div>
-</div>
+<div class="modal" id="authModal"><div class="modal-content"><h2 id="authTitle">🔐 Вход</h2><input type="text" id="authUsername" placeholder="Имя пользователя"><input type="password" id="authPassword" placeholder="Пароль"><button id="authSubmitBtn">Войти</button><div class="modal-switch" id="authSwitch">Нет аккаунта? Зарегистрироваться</div></div></div>
+<div class="modal" id="shareModal"><div class="modal-content"><h3 id="shareTitle">📤 Поделиться чатом</h3><div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center;"><button id="shareTelegramBtn" style="background:#f0f0f0; border:1px solid #e0e0e0; padding:10px 16px; border-radius:20px; cursor:pointer;">📱 Telegram</button><button id="shareWhatsAppBtn" style="background:#f0f0f0; border:1px solid #e0e0e0; padding:10px 16px; border-radius:20px; cursor:pointer;">💬 WhatsApp</button><button id="ShareVKBtn" style="background:#f0f0f0; border:1px solid #e0e0e0; padding:10px 16px; border-radius:20px; cursor:pointer;">📘 VK</button><button id="shareTwitterBtn" style="background:#f0f0f0; border:1px solid #e0e0e0; padding:10px 16px; border-radius:20px; cursor:pointer;">🐦 Twitter</button></div><div style="display: flex; gap: 10px;"><input type="text" id="shareLinkInput" readonly style="flex:1; padding:10px; border-radius:12px; border:1px solid #e0e0e0;"><button id="copyLinkBtn" style="background:#667eea; color:white; border:none; padding:10px 20px; border-radius:12px; cursor:pointer;">Копировать</button></div><button id="closeShareBtn" style="margin-top: 20px; background:#f0f0f0; border:1px solid #e0e0e0; padding:10px; border-radius:12px; cursor:pointer;">Закрыть</button></div></div>
 
 <script>
     // ==================== КОНФИГУРАЦИЯ ====================
@@ -259,325 +212,83 @@
 
     // ==================== ПЕРЕВОДЫ ====================
     const translations = {
-        ru: {
-            app_name: '🧠 Cognify AI', new_chat: '✨ Новый чат', news: '📰 Новости AI',
-            guest: 'Гость', login: 'Войти / Регистрация', export_chats: 'Экспорт чатов',
-            clear_all: 'Очистить всё', logout: 'Выйти', welcome_title: '🤖 Добро пожаловать в Cognify AI!',
-            welcome_context: '✅ Я помню весь разговор! Можешь задавать уточняющие вопросы.',
-            models_title: '🔥 Доступные AI модели:', model_groq: '🚀 Groq — самый быстрый',
-            model_cerebras: '⚡ Cerebras — 14,400 запросов/день', model_cloudflare: '☁️ Cloudflare — глобальная сеть',
-            model_gemini: '🤖 Gemini — работа с видео, аудио, изображениями',
-            news_hint: '📰 Новости: Нажми «Новости AI» в меню, чтобы читать свежие новости мира ИИ',
-            placeholder: 'Напиши свой вопрос...', send: 'Отправить', copy: '📋 Копировать',
-            thinking: 'Думаю...', news_title: '📰 Новости искусственного интеллекта', refresh: '🔄 Обновить',
-            close: '✖ Закрыть', no_news: '📭 Новостей пока нет', load_error: '⚠️ Не удалось загрузить новости',
-            view: 'просмотров', likes: 'лайков', share: 'Поделиться', write_comment: 'Напишите комментарий...',
-            send_comment: 'Отправить', no_comments: '💬 Нет комментариев. Будьте первым!',
-            like_added: '👍 Лайк поставлен!', like_removed: '❤️ Лайк убран', comment_added: '💬 Комментарий добавлен!',
-            share_success: '📤 Поделились в {{platform}}!', stats: '📊', today: 'сегодня',
-            yesterday: 'вчера', days_ago: 'дня назад', unknown_date: 'Дата неизвестна'
-        },
-        en: {
-            app_name: '🧠 Cognify AI', new_chat: '✨ New chat', news: '📰 AI News',
-            guest: 'Guest', login: 'Login / Register', export_chats: 'Export chats',
-            clear_all: 'Clear all', logout: 'Logout', welcome_title: '🤖 Welcome to Cognify AI!',
-            welcome_context: '✅ I remember the whole conversation! Ask clarifying questions.',
-            models_title: '🔥 Available AI models:', model_groq: '🚀 Groq — fastest',
-            model_cerebras: '⚡ Cerebras — 14,400 requests/day', model_cloudflare: '☁️ Cloudflare — global network',
-            model_gemini: '🤖 Gemini — video, audio, images',
-            news_hint: '📰 News: Click "AI News" in the menu to read the latest AI news',
-            placeholder: 'Write your question...', send: 'Send', copy: '📋 Copy',
-            thinking: 'Thinking...', news_title: '📰 Artificial Intelligence News', refresh: '🔄 Refresh',
-            close: '✖ Close', no_news: '📭 No news yet', load_error: '⚠️ Failed to load news',
-            view: 'views', likes: 'likes', share: 'Share', write_comment: 'Write a comment...',
-            send_comment: 'Send', no_comments: '💬 No comments yet. Be the first!',
-            like_added: '👍 Liked!', like_removed: '❤️ Like removed', comment_added: '💬 Comment added!',
-            share_success: '📤 Shared on {{platform}}!', stats: '📊', today: 'today',
-            yesterday: 'yesterday', days_ago: 'days ago', unknown_date: 'Date unknown'
-        },
-        es: {
-            app_name: '🧠 Cognify AI', new_chat: '✨ Nuevo chat', news: '📰 Noticias IA',
-            guest: 'Invitado', login: 'Iniciar sesión / Registrarse', export_chats: 'Exportar chats',
-            clear_all: 'Borrar todo', logout: 'Salir', welcome_title: '🤖 ¡Bienvenido a Cognify AI!',
-            welcome_context: '✅ Recuerdo toda la conversación! Haz preguntas aclaratorias.',
-            models_title: '🔥 Modelos IA disponibles:', model_groq: '🚀 Groq — más rápido',
-            model_cerebras: '⚡ Cerebras — 14,400 solicitudes/día', model_cloudflare: '☁️ Cloudflare — red global',
-            model_gemini: '🤖 Gemini — video, audio, imágenes',
-            news_hint: '📰 Noticias: Haz clic en "Noticias IA" en el menú',
-            placeholder: 'Escribe tu pregunta...', send: 'Enviar', copy: '📋 Copiar',
-            thinking: 'Pensando...', news_title: '📰 Noticias de Inteligencia Artificial', refresh: '🔄 Actualizar',
-            close: '✖ Cerrar', no_news: '📭 Sin noticias aún', load_error: '⚠️ Error al cargar noticias',
-            view: 'vistas', likes: 'me gusta', share: 'Compartir', write_comment: 'Escribe un comentario...',
-            send_comment: 'Enviar', no_comments: '💬 Sin comentarios. ¡Sé el primero!',
-            like_added: '👍 ¡Me gusta!', like_removed: '❤️ Me gusta eliminado', comment_added: '💬 ¡Comentario añadido!',
-            share_success: '📤 Compartido en {{platform}}!', stats: '📊', today: 'hoy',
-            yesterday: 'ayer', days_ago: 'días atrás', unknown_date: 'Fecha desconocida'
-        },
-        zh: {
-            app_name: '🧠 Cognify AI', new_chat: '✨ 新对话', news: '📰 AI新闻',
-            guest: '访客', login: '登录 / 注册', export_chats: '导出对话',
-            clear_all: '清空所有', logout: '退出', welcome_title: '🤖 欢迎使用 Cognify AI！',
-            welcome_context: '✅ 我记得整个对话！可以问澄清问题。',
-            models_title: '🔥 可用 AI 模型：', model_groq: '🚀 Groq — 最快',
-            model_cerebras: '⚡ Cerebras — 每天14,400次请求', model_cloudflare: '☁️ Cloudflare — 全球网络',
-            model_gemini: '🤖 Gemini — 视频、音频、图像',
-            news_hint: '📰 新闻：点击菜单中的"AI新闻"阅读最新AI资讯',
-            placeholder: '输入您的问题...', send: '发送', copy: '📋 复制',
-            thinking: '思考中...', news_title: '📰 人工智能新闻', refresh: '🔄 刷新',
-            close: '✖ 关闭', no_news: '📭 暂无新闻', load_error: '⚠️ 无法加载新闻',
-            view: '次浏览', likes: '点赞', share: '分享', write_comment: '写评论...',
-            send_comment: '发送', no_comments: '💬 暂无评论。成为第一个评论的人！',
-            like_added: '👍 点赞成功！', like_removed: '❤️ 已取消点赞', comment_added: '💬 评论已添加！',
-            share_success: '📤 已分享到 {{platform}}！', stats: '📊', today: '今天',
-            yesterday: '昨天', days_ago: '天前', unknown_date: '日期未知'
-        }
+        ru: { app_name: '🧠 Cognify AI', new_chat: '✨ Новый чат', news: '📰 Новости AI', guest: 'Гость', login: 'Войти / Регистрация', export_chats: 'Экспорт чатов', clear_all: 'Очистить всё', logout: 'Выйти', welcome_title: '🤖 Добро пожаловать в Cognify AI!', welcome_context: '✅ Я помню весь разговор! Можешь задавать уточняющие вопросы.', models_title: '🔥 Доступные AI модели:', model_groq: '🚀 Groq — самый быстрый', model_cerebras: '⚡ Cerebras — 14,400 запросов/день', model_cloudflare: '☁️ Cloudflare — глобальная сеть', model_gemini: '🤖 Gemini — работа с видео, аудио, изображениями', news_hint: '📰 Новости: Нажми «Новости AI» в меню, чтобы читать свежие новости мира ИИ', placeholder: 'Напиши свой вопрос...', send: 'Отправить', copy: '📋 Копировать', thinking: 'Думаю...', news_title: '📰 Новости искусственного интеллекта', refresh: '🔄 Обновить', close: '✖ Закрыть', no_news: '📭 Новостей пока нет', load_error: '⚠️ Не удалось загрузить новости', view: 'просмотров', likes: 'лайков', share: 'Поделиться', write_comment: 'Напишите комментарий...', send_comment: 'Отправить', no_comments: '💬 Нет комментариев. Будьте первым!', like_added: '👍 Лайк поставлен!', like_removed: '❤️ Лайк убран', comment_added: '💬 Комментарий добавлен!', share_success: '📤 Поделились в {{platform}}!', stats: '📊', today: 'сегодня', yesterday: 'вчера', days_ago: 'дня назад', unknown_date: 'Дата неизвестна' },
+        en: { app_name: '🧠 Cognify AI', new_chat: '✨ New chat', news: '📰 AI News', guest: 'Guest', login: 'Login / Register', export_chats: 'Export chats', clear_all: 'Clear all', logout: 'Logout', welcome_title: '🤖 Welcome to Cognify AI!', welcome_context: '✅ I remember the whole conversation! Ask clarifying questions.', models_title: '🔥 Available AI models:', model_groq: '🚀 Groq — fastest', model_cerebras: '⚡ Cerebras — 14,400 requests/day', model_cloudflare: '☁️ Cloudflare — global network', model_gemini: '🤖 Gemini — video, audio, images', news_hint: '📰 News: Click "AI News" in the menu to read the latest AI news', placeholder: 'Write your question...', send: 'Send', copy: '📋 Copy', thinking: 'Thinking...', news_title: '📰 Artificial Intelligence News', refresh: '🔄 Refresh', close: '✖ Close', no_news: '📭 No news yet', load_error: '⚠️ Failed to load news', view: 'views', likes: 'likes', share: 'Share', write_comment: 'Write a comment...', send_comment: 'Send', no_comments: '💬 No comments yet. Be the first!', like_added: '👍 Liked!', like_removed: '❤️ Like removed', comment_added: '💬 Comment added!', share_success: '📤 Shared on {{platform}}!', stats: '📊', today: 'today', yesterday: 'yesterday', days_ago: 'days ago', unknown_date: 'Date unknown' },
+        es: { app_name: '🧠 Cognify AI', new_chat: '✨ Nuevo chat', news: '📰 Noticias IA', guest: 'Invitado', login: 'Iniciar sesión / Registrarse', export_chats: 'Exportar chats', clear_all: 'Borrar todo', logout: 'Salir', welcome_title: '🤖 ¡Bienvenido a Cognify AI!', welcome_context: '✅ Recuerdo toda la conversación! Haz preguntas aclaratorias.', models_title: '🔥 Modelos IA disponibles:', model_groq: '🚀 Groq — más rápido', model_cerebras: '⚡ Cerebras — 14,400 solicitudes/día', model_cloudflare: '☁️ Cloudflare — red global', model_gemini: '🤖 Gemini — video, audio, imágenes', news_hint: '📰 Noticias: Haz clic en "Noticias IA" en el menú', placeholder: 'Escribe tu pregunta...', send: 'Enviar', copy: '📋 Copiar', thinking: 'Pensando...', news_title: '📰 Noticias de Inteligencia Artificial', refresh: '🔄 Actualizar', close: '✖ Cerrar', no_news: '📭 Sin noticias aún', load_error: '⚠️ Error al cargar noticias', view: 'vistas', likes: 'me gusta', share: 'Compartir', write_comment: 'Escribe un comentario...', send_comment: 'Enviar', no_comments: '💬 Sin comentarios. ¡Sé el primero!', like_added: '👍 ¡Me gusta!', like_removed: '❤️ Me gusta eliminado', comment_added: '💬 ¡Comentario añadido!', share_success: '📤 Compartido en {{platform}}!', stats: '📊', today: 'hoy', yesterday: 'ayer', days_ago: 'días atrás', unknown_date: 'Fecha desconocida' },
+        zh: { app_name: '🧠 Cognify AI', new_chat: '✨ 新对话', news: '📰 AI新闻', guest: '访客', login: '登录 / 注册', export_chats: '导出对话', clear_all: '清空所有', logout: '退出', welcome_title: '🤖 欢迎使用 Cognify AI！', welcome_context: '✅ 我记得整个对话！可以问澄清问题。', models_title: '🔥 可用 AI 模型：', model_groq: '🚀 Groq — 最快', model_cerebras: '⚡ Cerebras — 每天14,400次请求', model_cloudflare: '☁️ Cloudflare — 全球网络', model_gemini: '🤖 Gemini — 视频、音频、图像', news_hint: '📰 新闻：点击菜单中的"AI新闻"阅读最新AI资讯', placeholder: '输入您的问题...', send: '发送', copy: '📋 复制', thinking: '思考中...', news_title: '📰 人工智能新闻', refresh: '🔄 刷新', close: '✖ 关闭', no_news: '📭 暂无新闻', load_error: '⚠️ 无法加载新闻', view: '次浏览', likes: '点赞', share: '分享', write_comment: '写评论...', send_comment: '发送', no_comments: '💬 暂无评论。成为第一个评论的人！', like_added: '👍 点赞成功！', like_removed: '❤️ 已取消点赞', comment_added: '💬 评论已添加！', share_success: '📤 已分享到 {{platform}}！', stats: '📊', today: '今天', yesterday: '昨天', days_ago: '天前', unknown_date: '日期未知' }
     };
-
     const languages = { ru: '🇷🇺 Русский', en: '🇬🇧 English', es: '🇪🇸 Español', zh: '🇨🇳 中文' };
 
     function t(key) { return translations[currentLang][key] || translations.ru[key] || key; }
-
-    function updateUILanguage() {
-        document.querySelector('.logo').innerHTML = t('app_name');
-        document.getElementById('newChatBtn').innerHTML = t('new_chat');
-        document.getElementById('newsTabBtn').innerHTML = t('news');
-        document.getElementById('userInput').placeholder = t('placeholder');
-        document.getElementById('sendBtn').innerHTML = t('send');
-        document.getElementById('newsTitle').innerHTML = t('news_title');
-        document.getElementById('refreshNewsBtn').innerHTML = t('refresh');
-        document.getElementById('closeNewsBtn').innerHTML = t('close');
-        document.getElementById('statsBadge').innerHTML = `📊 <span id="statsCount">${totalMessages}</span>`;
-        updateWelcomeMessage();
-        if (allNews.length > 0) renderNewsList();
-    }
-
-    function updateWelcomeMessage() {
-        const welcomeDiv = document.getElementById('welcomeMessage');
-        if (!welcomeDiv) return;
-        welcomeDiv.innerHTML = `<p><strong>${t('welcome_title')}</strong></p><p>${t('welcome_context')}</p><p><strong>${t('models_title')}</strong><br>• ${t('model_groq')}<br>• ${t('model_cerebras')}<br>• ${t('model_cloudflare')}<br>• ${t('model_gemini')}</p><p>${t('news_hint')}</p>`;
-    }
-
-    function switchLanguage(lang) {
-        currentLang = lang;
-        localStorage.setItem('language', lang);
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
-        updateUILanguage();
-        updateUserUI();
-        showToast(`🌐 ${languages[lang]}`);
-    }
-
-    function showToast(message, isError = false) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.style.background = isError ? '#dc3545' : '#212529';
-        toast.innerHTML = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
-
-    function formatNumber(num) {
-        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-        return num.toString();
-    }
-
-    function formatDate(dateStr) {
-        const date = new Date(dateStr);
-        const now = new Date();
-        const diff = now - date;
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        if (days === 0) return t('today');
-        if (days === 1) return t('yesterday');
-        if (days < 7) return `${days} ${t('days_ago')}`;
-        return date.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : currentLang === 'es' ? 'es-ES' : 'ru-RU');
-    }
-
+    function showToast(message, isError) { const toast = document.createElement('div'); toast.className = 'toast'; toast.style.background = isError ? '#dc3545' : '#212529'; toast.innerHTML = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
+    function formatNumber(num) { if (num >= 1000000) return (num/1000000).toFixed(1)+'M'; if (num >= 1000) return (num/1000).toFixed(1)+'K'; return num.toString(); }
+    function formatDate(dateStr) { const date = new Date(dateStr); const now = new Date(); const diff = now - date; const days = Math.floor(diff/(1000*60*60*24)); if (days===0) return t('today'); if (days===1) return t('yesterday'); if (days<7) return `${days} ${t('days_ago')}`; return date.toLocaleDateString(currentLang==='zh'?'zh-CN':currentLang==='es'?'es-ES':'ru-RU'); }
     function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-
+    
+    // UI Language
+    function updateUILanguage() { document.querySelector('.logo').innerHTML = t('app_name'); document.getElementById('newChatBtn').innerHTML = t('new_chat'); document.getElementById('newsTabBtn').innerHTML = t('news'); document.getElementById('userInput').placeholder = t('placeholder'); document.getElementById('sendBtn').innerHTML = t('send'); document.getElementById('newsTitle').innerHTML = t('news_title'); document.getElementById('refreshNewsBtn').innerHTML = t('refresh'); document.getElementById('closeNewsBtn').innerHTML = t('close'); document.getElementById('statsBadge').innerHTML = `📊 <span id="statsCount">${totalMessages}</span>`; updateWelcomeMessage(); if (allNews.length > 0) renderNewsList(); }
+    function updateWelcomeMessage() { const welcomeDiv = document.getElementById('welcomeMessage'); if (!welcomeDiv) return; welcomeDiv.innerHTML = `<p><strong>${t('welcome_title')}</strong></p><p>${t('welcome_context')}</p><p><strong>${t('models_title')}</strong><br>• ${t('model_groq')}<br>• ${t('model_cerebras')}<br>• ${t('model_cloudflare')}<br>• ${t('model_gemini')}</p><p>${t('news_hint')}</p>`; }
+    function switchLanguage(lang) { currentLang = lang; localStorage.setItem('language', lang); document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang)); updateUILanguage(); updateUserUI(); showToast(`🌐 ${languages[lang]}`); }
+    
+    // News functions
     function saveNewsStats() { localStorage.setItem('newsStats', JSON.stringify(newsStats)); }
-    function updateNewsStatsDisplay(articleId) {
-        const viewsSpan = document.getElementById(`views-${articleId}`);
-        const likesSpan = document.getElementById(`likes-${articleId}`);
-        if (viewsSpan && newsStats[articleId]) viewsSpan.textContent = formatNumber(newsStats[articleId].views);
-        if (likesSpan && newsStats[articleId]) likesSpan.textContent = formatNumber(newsStats[articleId].likes);
-    }
-    function incrementView(articleId) {
-        if (!newsStats[articleId]) newsStats[articleId] = { views: 0, likes: 0 };
-        const viewedKey = `viewed_${articleId}`;
-        if (!sessionStorage.getItem(viewedKey)) {
-            newsStats[articleId].views++;
-            sessionStorage.setItem(viewedKey, 'true');
-            saveNewsStats();
-        }
-    }
-    function likeArticle(articleId, buttonElement) {
-        if (!newsStats[articleId]) newsStats[articleId] = { views: 0, likes: 0 };
-        const likedKey = `liked_${articleId}`;
-        const isLiked = localStorage.getItem(likedKey) === 'true';
-        if (isLiked) {
-            newsStats[articleId].likes--;
-            localStorage.removeItem(likedKey);
-            buttonElement.classList.remove('liked');
-            showToast(t('like_removed'));
-        } else {
-            newsStats[articleId].likes++;
-            localStorage.setItem(likedKey, 'true');
-            buttonElement.classList.add('liked');
-            showToast(t('like_added'));
-        }
-        saveNewsStats();
-        updateNewsStatsDisplay(articleId);
-    }
-    function loadComments(articleId) {
-        const commentsList = document.getElementById(`comments-list-${articleId}`);
-        if (!commentsList) return;
-        const comments = newsComments[articleId] || [];
-        if (comments.length === 0) { commentsList.innerHTML = `<div style="color:#999; text-align:center; padding:20px;">${t('no_comments')}</div>`; return; }
-        commentsList.innerHTML = comments.map(comment => `<div class="comment-item"><div class="comment-avatar">${comment.author.charAt(0).toUpperCase()}</div><div class="comment-content"><div class="comment-author">${escapeHtml(comment.author)}</div><div class="comment-text">${escapeHtml(comment.text)}</div><div class="comment-date">${formatDate(comment.date)}</div></div></div>`).join('');
-    }
-    function addComment(articleId) {
-        const input = document.getElementById(`comment-input-${articleId}`);
-        const text = input.value.trim();
-        if (!text) { showToast('✏️ ' + t('write_comment'), true); return; }
-        const currentUserName = localStorage.getItem('currentUser') || 'Гость';
-        const comment = { id: Date.now().toString(), author: currentUserName, text: text, date: new Date().toISOString() };
-        if (!newsComments[articleId]) newsComments[articleId] = [];
-        newsComments[articleId].unshift(comment);
-        if (newsComments[articleId].length > 50) newsComments[articleId] = newsComments[articleId].slice(0, 50);
-        localStorage.setItem('newsComments', JSON.stringify(newsComments));
-        input.value = '';
-        loadComments(articleId);
-        showToast(t('comment_added'));
-    }
-    function toggleComments(articleId) {
-        const commentsDiv = document.getElementById(`comments-${articleId}`);
-        if (commentsDiv) { commentsDiv.classList.toggle('show'); if (commentsDiv.classList.contains('show')) loadComments(articleId); }
-    }
-    function shareNews(articleId, platform) {
-        const article = allNews.find(a => a.id === articleId);
-        if (!article) return;
-        const url = article.source_url;
-        const title = encodeURIComponent(article.title);
-        const shareUrls = { telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${title}`, whatsapp: `https://wa.me/?text=${title}%20${encodeURIComponent(url)}`, vk: `https://vk.com/share.php?url=${encodeURIComponent(url)}&title=${title}`, twitter: `https://twitter.com/intent/tweet?text=${title}&url=${encodeURIComponent(url)}`, facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${title}` };
-        if (shareUrls[platform]) { window.open(shareUrls[platform], '_blank', 'width=600,height=400'); showToast(t('share_success').replace('{{platform}}', platform)); if (newsStats[articleId]) { newsStats[articleId].views += 2; saveNewsStats(); updateNewsStatsDisplay(articleId); } }
-    }
-
-    function renderNewsList() {
-        const newsListDiv = document.getElementById('newsList');
-        if (allNews.length === 0) { newsListDiv.innerHTML = `<div class="news-empty">${t('no_news')}</div>`; return; }
-        allNews.forEach(article => { incrementView(article.id); setTimeout(() => updateNewsStatsDisplay(article.id), 100); });
-        newsListDiv.innerHTML = allNews.map(article => `
-            <div class="news-card" data-id="${article.id}">
-                ${article.image_url ? `<img class="news-image" src="${article.image_url}" alt="${escapeHtml(article.title)}" onerror="this.src='https://source.unsplash.com/800x400/?ai,technology'">` : ''}
-                <h3 onclick="showFullArticle('${article.id}')">${escapeHtml(article.title)}</h3>
-                <div class="news-meta"><span>📅 ${article.published_at ? formatDate(article.published_at) : t('unknown_date')}</span><span>🔗 ${escapeHtml(article.source || 'AI News')}</span><span class="view-count">👁️ <span id="views-${article.id}">${formatNumber(newsStats[article.id]?.views || 0)}</span> ${t('view')}</span></div>
-                <div class="news-summary" onclick="showFullArticle('${article.id}')">${escapeHtml((article.summary || article.content || '').substring(0, 200))}...</div>
-                <div class="news-stats"><div class="news-stat ${localStorage.getItem(`liked_${article.id}`) === 'true' ? 'liked' : ''}" onclick="likeArticle('${article.id}', this)"><span class="stat-icon">❤️</span> <span id="likes-${article.id}">${formatNumber(newsStats[article.id]?.likes || 0)}</span></div><div class="news-stat" onclick="toggleComments('${article.id}')"><span class="stat-icon">💬</span> <span>${newsComments[article.id]?.length || 0}</span></div><div class="news-stat" onclick="shareNews('${article.id}', 'telegram')"><span class="stat-icon">📤</span> <span>${t('share')}</span></div></div>
-                <div class="comments-section" id="comments-${article.id}"><div class="comment-input"><input type="text" id="comment-input-${article.id}" placeholder="${t('write_comment')}"><button onclick="addComment('${article.id}')">${t('send_comment')}</button></div><div id="comments-list-${article.id}"></div></div>
-                <div class="news-tags">${(article.tags || []).map(tag => `<span class="news-tag">#${escapeHtml(tag)}</span>`).join('')}</div>
-                <div class="share-buttons"><button class="share-btn" onclick="shareNews('${article.id}', 'telegram')">📱 Telegram</button><button class="share-btn" onclick="shareNews('${article.id}', 'whatsapp')">💬 WhatsApp</button><button class="share-btn" onclick="shareNews('${article.id}', 'vk')">📘 VK</button><button class="share-btn" onclick="shareNews('${article.id}', 'twitter')">🐦 Twitter</button></div>
-            </div>
-        `).join('');
-    }
-
-    function showFullArticle(articleId) {
-        const article = allNews.find(a => a.id === articleId);
-        if (!article) return;
-        if (!newsStats[articleId]) newsStats[articleId] = { views: 0, likes: 0 };
-        newsStats[articleId].views++;
-        saveNewsStats();
-        updateNewsStatsDisplay(articleId);
-        let modal = document.getElementById('articleModal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'articleModal';
-            modal.className = 'article-modal';
-            modal.innerHTML = `<div class="article-modal-content"><button class="close-article-modal" onclick="closeArticleModal()">✖</button><div id="articleModalBody"></div></div>`;
-            document.body.appendChild(modal);
-        }
-        document.getElementById('articleModalBody').innerHTML = `<h2 style="color:#667eea;margin-bottom:16px;">${escapeHtml(article.title)}</h2><div class="news-meta" style="margin-bottom:20px;"><span>📅 ${article.published_at || t('unknown_date')}</span><span>🔗 ${escapeHtml(article.source || 'AI News')}</span><span>👁️ ${formatNumber(newsStats[articleId]?.views || 1)} ${t('view')}</span><span>❤️ ${formatNumber(newsStats[articleId]?.likes || 0)} ${t('likes')}</span></div><div style="line-height:1.7;">${escapeHtml(article.content || article.summary || '').replace(/\n/g, '<br>')}</div><div class="share-buttons" style="margin-top:20px;"><button class="share-btn" onclick="shareNews('${articleId}', 'telegram')">📱 Telegram</button><button class="share-btn" onclick="shareNews('${articleId}', 'whatsapp')">💬 WhatsApp</button><button class="share-btn" onclick="shareNews('${articleId}', 'vk')">📘 VK</button><button class="share-btn" onclick="shareNews('${articleId}', 'twitter')">🐦 Twitter</button></div>`;
-        modal.classList.add('show');
-    }
-
+    function updateNewsStatsDisplay(articleId) { const viewsSpan = document.getElementById(`views-${articleId}`); const likesSpan = document.getElementById(`likes-${articleId}`); if (viewsSpan && newsStats[articleId]) viewsSpan.textContent = formatNumber(newsStats[articleId].views); if (likesSpan && newsStats[articleId]) likesSpan.textContent = formatNumber(newsStats[articleId].likes); }
+    function incrementView(articleId) { if (!newsStats[articleId]) newsStats[articleId] = { views: 0, likes: 0 }; const viewedKey = `viewed_${articleId}`; if (!sessionStorage.getItem(viewedKey)) { newsStats[articleId].views++; sessionStorage.setItem(viewedKey, 'true'); saveNewsStats(); } }
+    function likeArticle(articleId, buttonElement) { if (!newsStats[articleId]) newsStats[articleId] = { views: 0, likes: 0 }; const likedKey = `liked_${articleId}`; const isLiked = localStorage.getItem(likedKey) === 'true'; if (isLiked) { newsStats[articleId].likes--; localStorage.removeItem(likedKey); buttonElement.classList.remove('liked'); showToast(t('like_removed')); } else { newsStats[articleId].likes++; localStorage.setItem(likedKey, 'true'); buttonElement.classList.add('liked'); showToast(t('like_added')); } saveNewsStats(); updateNewsStatsDisplay(articleId); }
+    function loadComments(articleId) { const commentsList = document.getElementById(`comments-list-${articleId}`); if (!commentsList) return; const comments = newsComments[articleId] || []; if (comments.length === 0) { commentsList.innerHTML = `<div style="color:#999; text-align:center; padding:20px;">${t('no_comments')}</div>`; return; } commentsList.innerHTML = comments.map(comment => `<div class="comment-item"><div class="comment-avatar">${comment.author.charAt(0).toUpperCase()}</div><div class="comment-content"><div class="comment-author">${escapeHtml(comment.author)}</div><div class="comment-text">${escapeHtml(comment.text)}</div><div class="comment-date">${formatDate(comment.date)}</div></div></div>`).join(''); }
+    function addComment(articleId) { const input = document.getElementById(`comment-input-${articleId}`); const text = input.value.trim(); if (!text) { showToast('✏️ ' + t('write_comment'), true); return; } const currentUserName = localStorage.getItem('currentUser') || 'Гость'; const comment = { id: Date.now().toString(), author: currentUserName, text: text, date: new Date().toISOString() }; if (!newsComments[articleId]) newsComments[articleId] = []; newsComments[articleId].unshift(comment); if (newsComments[articleId].length > 50) newsComments[articleId] = newsComments[articleId].slice(0, 50); localStorage.setItem('newsComments', JSON.stringify(newsComments)); input.value = ''; loadComments(articleId); showToast(t('comment_added')); }
+    function toggleComments(articleId) { const commentsDiv = document.getElementById(`comments-${articleId}`); if (commentsDiv) { commentsDiv.classList.toggle('show'); if (commentsDiv.classList.contains('show')) loadComments(articleId); } }
+    function shareNews(articleId, platform) { const article = allNews.find(a => a.id === articleId); if (!article) return; const url = article.source_url; const title = encodeURIComponent(article.title); const shareUrls = { telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${title}`, whatsapp: `https://wa.me/?text=${title}%20${encodeURIComponent(url)}`, vk: `https://vk.com/share.php?url=${encodeURIComponent(url)}&title=${title}`, twitter: `https://twitter.com/intent/tweet?text=${title}&url=${encodeURIComponent(url)}` }; if (shareUrls[platform]) { window.open(shareUrls[platform], '_blank', 'width=600,height=400'); showToast(t('share_success').replace('{{platform}}', platform)); if (newsStats[articleId]) { newsStats[articleId].views += 2; saveNewsStats(); updateNewsStatsDisplay(articleId); } } }
+    function renderNewsList() { const newsListDiv = document.getElementById('newsList'); if (allNews.length === 0) { newsListDiv.innerHTML = `<div class="news-empty">${t('no_news')}</div>`; return; } allNews.forEach(article => { incrementView(article.id); setTimeout(() => updateNewsStatsDisplay(article.id), 100); }); newsListDiv.innerHTML = allNews.map(article => `<div class="news-card" data-id="${article.id}">${article.image_url ? `<img class="news-image" src="${article.image_url}" alt="${escapeHtml(article.title)}" onerror="this.src='https://source.unsplash.com/800x400/?ai,technology'">` : ''}<h3 onclick="showFullArticle('${article.id}')">${escapeHtml(article.title)}</h3><div class="news-meta"><span>📅 ${article.published_at ? formatDate(article.published_at) : t('unknown_date')}</span><span>🔗 ${escapeHtml(article.source || 'AI News')}</span><span class="view-count">👁️ <span id="views-${article.id}">${formatNumber(newsStats[article.id]?.views || 0)}</span> ${t('view')}</span></div><div class="news-summary" onclick="showFullArticle('${article.id}')">${escapeHtml((article.summary || article.content || '').substring(0,200))}...</div><div class="news-stats"><div class="news-stat ${localStorage.getItem(`liked_${article.id}`) === 'true' ? 'liked' : ''}" onclick="likeArticle('${article.id}', this)"><span class="stat-icon">❤️</span> <span id="likes-${article.id}">${formatNumber(newsStats[article.id]?.likes || 0)}</span></div><div class="news-stat" onclick="toggleComments('${article.id}')"><span class="stat-icon">💬</span> <span>${newsComments[article.id]?.length || 0}</span></div><div class="news-stat" onclick="shareNews('${article.id}', 'telegram')"><span class="stat-icon">📤</span> <span>${t('share')}</span></div></div><div class="comments-section" id="comments-${article.id}"><div class="comment-input"><input type="text" id="comment-input-${article.id}" placeholder="${t('write_comment')}"><button onclick="addComment('${article.id}')">${t('send_comment')}</button></div><div id="comments-list-${article.id}"></div></div><div class="news-tags">${(article.tags || []).map(tag => `<span class="news-tag">#${escapeHtml(tag)}</span>`).join('')}</div><div class="share-buttons"><button class="share-btn" onclick="shareNews('${article.id}', 'telegram')">📱 Telegram</button><button class="share-btn" onclick="shareNews('${article.id}', 'whatsapp')">💬 WhatsApp</button><button class="share-btn" onclick="shareNews('${article.id}', 'vk')">📘 VK</button><button class="share-btn" onclick="shareNews('${article.id}', 'twitter')">🐦 Twitter</button></div></div>`).join(''); }
+    function showFullArticle(articleId) { const article = allNews.find(a => a.id === articleId); if (!article) return; if (!newsStats[articleId]) newsStats[articleId] = { views: 0, likes: 0 }; newsStats[articleId].views++; saveNewsStats(); updateNewsStatsDisplay(articleId); let modal = document.getElementById('articleModal'); if (!modal) { modal = document.createElement('div'); modal.id = 'articleModal'; modal.className = 'article-modal'; modal.innerHTML = `<div class="article-modal-content"><button class="close-article-modal" onclick="closeArticleModal()">✖</button><div id="articleModalBody"></div></div>`; document.body.appendChild(modal); } document.getElementById('articleModalBody').innerHTML = `<h2 style="color:#667eea;margin-bottom:16px;">${escapeHtml(article.title)}</h2><div class="news-meta" style="margin-bottom:20px;"><span>📅 ${article.published_at || t('unknown_date')}</span><span>🔗 ${escapeHtml(article.source || 'AI News')}</span><span>👁️ ${formatNumber(newsStats[articleId]?.views || 1)} ${t('view')}</span><span>❤️ ${formatNumber(newsStats[articleId]?.likes || 0)} ${t('likes')}</span></div><div style="line-height:1.7;">${escapeHtml(article.content || article.summary || '').replace(/\n/g, '<br>')}</div><div class="share-buttons" style="margin-top:20px;"><button class="share-btn" onclick="shareNews('${articleId}', 'telegram')">📱 Telegram</button><button class="share-btn" onclick="shareNews('${articleId}', 'whatsapp')">💬 WhatsApp</button><button class="share-btn" onclick="shareNews('${articleId}', 'vk')">📘 VK</button><button class="share-btn" onclick="shareNews('${articleId}', 'twitter')">🐦 Twitter</button></div>`; modal.classList.add('show'); }
     function closeArticleModal() { const modal = document.getElementById('articleModal'); if (modal) modal.classList.remove('show'); }
-
-    async function loadNews() {
-        const newsListDiv = document.getElementById('newsList');
-        newsListDiv.innerHTML = '<div class="skeleton-card"><div class="skeleton-title"></div><div class="skeleton-meta"></div><div class="skeleton-text"></div></div>';
-        try {
-            const response = await fetch('news.json?t=' + Date.now());
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            allNews = data.articles || [];
-            const savedComments = localStorage.getItem('newsComments');
-            if (savedComments) newsComments = JSON.parse(savedComments);
-            renderNewsList();
-        } catch (error) { newsListDiv.innerHTML = `<div class="news-empty">${t('load_error')}</div>`; }
-    }
-
-    // Чат функции
+    async function loadNews() { const newsListDiv = document.getElementById('newsList'); newsListDiv.innerHTML = '<div class="skeleton-card"><div class="skeleton-title"></div><div class="skeleton-meta"></div><div class="skeleton-text"></div></div>'; try { const response = await fetch('news.json?t=' + Date.now()); if (!response.ok) throw new Error(); const data = await response.json(); allNews = data.articles || []; const savedComments = localStorage.getItem('newsComments'); if (savedComments) newsComments = JSON.parse(savedComments); renderNewsList(); } catch(error) { newsListDiv.innerHTML = `<div class="news-empty">${t('load_error')}</div>`; } }
+    
+    // Chat functions
     function loadUserData() { const key = currentUser ? `chats_${currentUser}` : 'chats_guest'; const saved = localStorage.getItem(key); chats = saved ? JSON.parse(saved) : {}; if (Object.keys(chats).length === 0) createNewChat(); else { const lastKey = currentUser ? `lastChatId_${currentUser}` : 'lastChatId_guest'; const lastId = localStorage.getItem(lastKey); if (lastId && chats[lastId]) currentChatId = lastId; else currentChatId = Object.keys(chats)[0]; loadChat(currentChatId); } renderHistory(); }
     function saveUserData() { const key = currentUser ? `chats_${currentUser}` : 'chats_guest'; localStorage.setItem(key, JSON.stringify(chats)); localStorage.setItem(currentUser ? `lastChatId_${currentUser}` : 'lastChatId_guest', currentChatId); }
     function updateUserUI() { const avatar = document.getElementById('userAvatar'); const nameDisplay = document.querySelector('#userNameDisplay .menu-text'); if (currentUser) { avatar.innerHTML = currentUser.charAt(0).toUpperCase(); if (nameDisplay) nameDisplay.textContent = currentUser; } else { avatar.innerHTML = '👤'; if (nameDisplay) nameDisplay.textContent = t('guest'); } const loginItem = document.getElementById('loginMenuItem'); const logoutItem = document.getElementById('logoutMenuItem'); if (currentUser) { if (loginItem) loginItem.style.display = 'none'; if (logoutItem) logoutItem.style.display = 'flex'; } else { if (loginItem) loginItem.style.display = 'flex'; if (logoutItem) logoutItem.style.display = 'none'; } }
     function createNewChat() { currentChatId = Date.now().toString(); chats[currentChatId] = { id: currentChatId, title: 'Новый чат', messages: [{ role: 'bot', content: 'Привет! Я Cognify AI. Задай любой вопрос!' }], createdAt: new Date().toISOString() }; saveUserData(); renderHistory(); loadChat(currentChatId); showToast('✨ Новый чат'); }
     function loadChat(chatId) { currentChatId = chatId; const chat = chats[chatId]; if (!chat) return; document.getElementById('chatTitle').innerText = chat.title; const messagesArea = document.getElementById('messagesArea'); messagesArea.innerHTML = ''; chat.messages.forEach(msg => addMessageToUI(msg.content, msg.role === 'user')); document.querySelectorAll('.history-item').forEach(el => { el.classList.remove('active'); if (el.dataset.id === chatId) el.classList.add('active'); }); }
     function addMessageToUI(text, isUser) { const messagesArea = document.getElementById('messagesArea'); const div = document.createElement('div'); div.className = `message ${isUser ? 'user' : 'bot'}`; if (isUser) { div.innerHTML = `<div class="message-avatar">👤</div><div class="message-content">${formatMessage(text)}</div>`; } else { div.innerHTML = `<div class="message-avatar">🧠</div><div class="message-content">${formatMessage(text)}</div>`; } messagesArea.appendChild(div); messagesArea.scrollTop = messagesArea.scrollHeight; }
-    function saveAndAddMessage(text, isUser) { const chat = chats[currentChatId]; if (chat) { chat.messages.push({ role: isUser ? 'user' : 'bot', content: text }); if (chat.messages.filter(m => m.role === 'user').length === 1 && isUser) { chat.title = text.slice(0, 30) + (text.length > 30 ? '...' : ''); document.getElementById('chatTitle').innerText = chat.title; } saveUserData(); renderHistory(); if (isUser) { totalMessages++; localStorage.setItem('totalMessages', totalMessages); document.getElementById('statsCount').innerText = totalMessages; } } addMessageToUI(text, isUser); }
+    function saveAndAddMessage(text, isUser) { const chat = chats[currentChatId]; if (chat) { chat.messages.push({ role: isUser ? 'user' : 'bot', content: text }); if (chat.messages.filter(m => m.role === 'user').length === 1 && isUser) { chat.title = text.slice(0,30) + (text.length>30?'...':''); document.getElementById('chatTitle').innerText = chat.title; } saveUserData(); renderHistory(); if (isUser) { totalMessages++; localStorage.setItem('totalMessages', totalMessages); document.getElementById('statsCount').innerText = totalMessages; } } addMessageToUI(text, isUser); }
     function formatMessage(text) { return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); }
-    function renderHistory() { const historyList = document.getElementById('historyList'); historyList.innerHTML = ''; const sorted = Object.values(chats).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); sorted.forEach(chat => { const item = document.createElement('div'); item.className = 'history-item' + (chat.id === currentChatId ? ' active' : ''); item.dataset.id = chat.id; item.innerHTML = `<span class="history-title">${escapeHtml(chat.title)}</span><div class="history-actions"><button class="history-btn" onclick="event.stopPropagation(); openShareModal('${chat.id}')">🔗</button><button class="history-btn" onclick="event.stopPropagation(); deleteChat('${chat.id}')">🗑️</button></div>`; item.onclick = () => loadChat(chat.id); historyList.appendChild(item); }); }
+    function renderHistory() { const historyList = document.getElementById('historyList'); historyList.innerHTML = ''; const sorted = Object.values(chats).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)); sorted.forEach(chat => { const item = document.createElement('div'); item.className = 'history-item' + (chat.id === currentChatId ? ' active' : ''); item.dataset.id = chat.id; item.innerHTML = `<span class="history-title">${escapeHtml(chat.title)}</span><div class="history-actions"><button class="history-btn" onclick="event.stopPropagation(); openShareModal('${chat.id}')">🔗</button><button class="history-btn" onclick="event.stopPropagation(); deleteChat('${chat.id}')">🗑️</button></div>`; item.onclick = () => loadChat(chat.id); historyList.appendChild(item); }); }
     function deleteChat(chatId) { if (confirm('Удалить чат?')) { delete chats[chatId]; saveUserData(); const remaining = Object.keys(chats); if (remaining.length === 0) createNewChat(); else loadChat(remaining[0]); renderHistory(); showToast('🗑️ Чат удален'); } }
     function copyMessageText(elementId) { const element = document.getElementById(elementId); if (!element) return; const tempDiv = document.createElement('div'); tempDiv.innerHTML = element.innerHTML; const textToCopy = tempDiv.textContent || tempDiv.innerText; copyToClipboard(textToCopy); }
     function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showToast('📋 Скопировано!')).catch(() => showToast('❌ Ошибка', true)); }
     function switchApi(api) { currentApi = api; document.querySelectorAll('.api-btn').forEach(btn => { btn.classList.remove('active'); if (btn.dataset.api === api) btn.classList.add('active'); }); const names = { groq: '🚀 Groq', cerebras: '⚡ Cerebras', cloudflare: '☁️ Cloudflare', gemini: '🤖 Gemini' }; saveAndAddMessage(`Переключено на ${names[api]}`, false); }
-    async function sendMessage() { const input = document.getElementById('userInput'); const question = input.value.trim(); if (!question) return; saveAndAddMessage(question, true); input.value = ''; input.style.height = 'auto'; const chat = chats[currentChatId]; if (!chat) return; const conversationHistory = []; const lastMessages = chat.messages.slice(-10); for (const msg of lastMessages) { if (msg.role === 'user') conversationHistory.push({ role: 'user', content: msg.content }); else if (msg.role === 'bot' && !msg.content.includes('Переключено на')) conversationHistory.push({ role: 'assistant', content: msg.content }); } conversationHistory.push({ role: 'user', content: question }); const loadingId = 'loading-' + Date.now(); const messagesArea = document.getElementById('messagesArea'); const loadingDiv = document.createElement('div'); loadingDiv.className = 'message bot'; loadingDiv.id = loadingId; loadingDiv.innerHTML = `<div class="message-avatar">🧠</div><div class="message-content"><div class="loading"></div> ${t('thinking')}</div>`; messagesArea.appendChild(loadingDiv); messagesArea.scrollTop = messagesArea.scrollHeight; let answer; try { const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 60000); const response = await fetch(`${WORKER_URL}/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: conversationHistory, api: currentApi }), signal: controller.signal }); clearTimeout(timeoutId); const data = await response.json(); answer = data.answer || data.error || 'Ошибка API'; } catch (err) { answer = `❌ Ошибка: ${err.name === 'AbortError' ? 'Таймаут запроса' : err.message}`; } document.getElementById(loadingId)?.remove(); saveAndAddMessage(answer, false); }
-
-    // Шаринг чата
+    async function sendMessage() { const input = document.getElementById('userInput'); const question = input.value.trim(); if (!question) return; saveAndAddMessage(question, true); input.value = ''; input.style.height = 'auto'; const chat = chats[currentChatId]; if (!chat) return; const conversationHistory = []; const lastMessages = chat.messages.slice(-10); for (const msg of lastMessages) { if (msg.role === 'user') conversationHistory.push({ role: 'user', content: msg.content }); else if (msg.role === 'bot' && !msg.content.includes('Переключено на')) conversationHistory.push({ role: 'assistant', content: msg.content }); } conversationHistory.push({ role: 'user', content: question }); const loadingId = 'loading-' + Date.now(); const messagesArea = document.getElementById('messagesArea'); const loadingDiv = document.createElement('div'); loadingDiv.className = 'message bot'; loadingDiv.id = loadingId; loadingDiv.innerHTML = `<div class="message-avatar">🧠</div><div class="message-content"><div class="loading"></div> ${t('thinking')}</div>`; messagesArea.appendChild(loadingDiv); messagesArea.scrollTop = messagesArea.scrollHeight; let answer; try { const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 60000); const response = await fetch(`${WORKER_URL}/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: conversationHistory, api: currentApi }), signal: controller.signal }); clearTimeout(timeoutId); const data = await response.json(); answer = data.answer || data.error || 'Ошибка API'; } catch(err) { answer = `❌ Ошибка: ${err.name === 'AbortError' ? 'Таймаут запроса' : err.message}`; } document.getElementById(loadingId)?.remove(); saveAndAddMessage(answer, false); }
+    
+    // Share chat
     function openShareModal(chatId) { shareChatId = chatId; const chat = chats[chatId]; if (!chat) return; const shareUrl = window.location.origin + window.location.pathname + '?share=' + chatId; document.getElementById('shareLinkInput').value = shareUrl; document.getElementById('shareModal').classList.add('show'); toggleUserMenu(); }
     function closeShareModal() { document.getElementById('shareModal').classList.remove('show'); }
     function copyChatLink() { copyToClipboard(document.getElementById('shareLinkInput').value); }
-    function getChatText() { const chat = chats[shareChatId]; if (!chat) return 'Cognify AI Чат'; return chat.messages.map(m => `${m.role === 'user' ? '👤' : '🧠'}: ${m.content}`).join('\n\n').substring(0, 2000); }
+    function getChatText() { const chat = chats[shareChatId]; if (!chat) return 'Cognify AI Чат'; return chat.messages.map(m => `${m.role === 'user' ? '👤' : '🧠'}: ${m.content}`).join('\n\n').substring(0,2000); }
     function shareToTelegram() { window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(getChatText())}`, '_blank'); }
     function shareToWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(getChatText() + '\n\n' + window.location.href)}`, '_blank'); }
     function shareToVK() { window.open(`https://vk.com/share.php?url=${encodeURIComponent(window.location.href)}&title=Cognify%20AI&description=${encodeURIComponent(getChatText())}`, '_blank'); }
-    function shareToTwitter() { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getChatText().substring(0, 280))}&url=${encodeURIComponent(window.location.href)}`, '_blank'); }
-
-    // Авторизация
+    function shareToTwitter() { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getChatText().substring(0,280))}&url=${encodeURIComponent(window.location.href)}`, '_blank'); }
+    
+    // Auth
     function showAuthModal() { authMode = 'login'; document.getElementById('authTitle').innerHTML = '🔐 Вход'; document.getElementById('authSubmitBtn').innerHTML = 'Войти'; document.getElementById('authSwitch').innerHTML = 'Нет аккаунта? Зарегистрироваться'; document.getElementById('authModal').classList.add('show'); toggleUserMenu(); }
     function toggleAuthMode() { if (authMode === 'login') { authMode = 'register'; document.getElementById('authTitle').innerHTML = '📝 Регистрация'; document.getElementById('authSubmitBtn').innerHTML = 'Зарегистрироваться'; document.getElementById('authSwitch').innerHTML = 'Уже есть аккаунт? Войти'; } else { authMode = 'login'; document.getElementById('authTitle').innerHTML = '🔐 Вход'; document.getElementById('authSubmitBtn').innerHTML = 'Войти'; document.getElementById('authSwitch').innerHTML = 'Нет аккаунта? Зарегистрироваться'; } }
     function authSubmit() { const username = document.getElementById('authUsername').value.trim(); const password = document.getElementById('authPassword').value; if (!username || !password) { showToast('Заполните все поля', true); return; } const users = JSON.parse(localStorage.getItem('users') || '{}'); if (authMode === 'register') { if (users[username]) { showToast('Пользователь уже существует', true); return; } if (password.length < 4) { showToast('Пароль минимум 4 символа', true); return; } users[username] = password; localStorage.setItem('users', JSON.stringify(users)); showToast('✅ Регистрация успешна! Теперь войдите.'); toggleAuthMode(); } else { if (users[username] !== password) { showToast('Неверное имя или пароль', true); return; } currentUser = username; localStorage.setItem('currentUser', username); updateUserUI(); loadUserData(); showToast(`👋 Добро пожаловать, ${username}!`); document.getElementById('authModal').classList.remove('show'); } document.getElementById('authUsername').value = ''; document.getElementById('authPassword').value = ''; }
     function logout() { if (confirm('Выйти из аккаунта?')) { currentUser = null; localStorage.removeItem('currentUser'); updateUserUI(); loadUserData(); showToast('🚪 Вы вышли'); toggleUserMenu(); } }
     function clearAllData() { if (confirm('⚠️ Удалить ВСЕ чаты? Отменить нельзя!')) { chats = {}; createNewChat(); saveUserData(); renderHistory(); totalMessages = 0; localStorage.setItem('totalMessages', '0'); document.getElementById('statsCount').innerText = '0'; showToast('🗑️ Все данные очищены'); toggleUserMenu(); } }
     function exportAllChats() { const data = JSON.stringify(chats, null, 2); const blob = new Blob([data], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `cognify-chats-${Date.now()}.json`; a.click(); URL.revokeObjectURL(url); showToast('📥 Экспорт завершен'); toggleUserMenu(); }
-
-    // UI события
+    
+    // UI Events
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
     function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('show'); }
     function showNewsTab() { document.getElementById('messagesArea').style.display = 'none'; document.querySelector('.input-area').style.display = 'none'; document.getElementById('chatTitle').innerText = t('news_title'); document.getElementById('newsContainer').style.display = 'block'; loadNews(); document.getElementById('newsBadge').style.display = 'none'; if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open'); }
     function closeNewsTab() { document.getElementById('messagesArea').style.display = 'block'; document.querySelector('.input-area').style.display = 'flex'; const chat = chats[currentChatId]; document.getElementById('chatTitle').innerText = chat ? chat.title : 'Новый чат'; document.getElementById('newsContainer').style.display = 'none'; }
     function refreshNews() { loadNews(); showToast('🔄 Новости обновляются...'); }
-
-    // Инициализация
-    function initLanguageSelector() {
-        const selector = document.getElementById('languageSelector');
-        selector.innerHTML = '';
-        for (const [code, name] of Object.entries(languages)) {
-            const btn = document.createElement('button');
-            btn.className = 'lang-btn' + (code === currentLang ? ' active' : '');
-            btn.textContent = name;
-            btn.dataset.lang = code;
-            btn.onclick = () => switchLanguage(code);
-            selector.appendChild(btn);
-        }
-    }
-    function initApiSelector() {
-        const selector = document.getElementById('apiSelector');
-        selector.innerHTML = '';
-        const apis = ['groq', 'cerebras', 'cloudflare', 'gemini'];
-        const icons = { groq: '🚀', cerebras: '⚡', cloudflare: '☁️', gemini: '🤖' };
-        const names = { groq: 'Groq', cerebras: 'Cerebras', cloudflare: 'Cloudflare', gemini: 'Gemini' };
-        apis.forEach(api => { const btn = document.createElement('button'); btn.className = 'api-btn' + (api === currentApi ? ' active' : ''); btn.innerHTML = `${icons[api]} ${names[api]}`; btn.dataset.api = api; btn.onclick = () => switchApi(api); selector.appendChild(btn); });
-    }
-
+    
+    // Init
+    function initLanguageSelector() { const selector = document.getElementById('languageSelector'); selector.innerHTML = ''; for (const [code, name] of Object.entries(languages)) { const btn = document.createElement('button'); btn.className = 'lang-btn' + (code === currentLang ? ' active' : ''); btn.textContent = name; btn.dataset.lang = code; btn.onclick = () => switchLanguage(code); selector.appendChild(btn); } }
+    function initApiSelector() { const selector = document.getElementById('apiSelector'); selector.innerHTML = ''; const apis = ['groq', 'cerebras', 'cloudflare', 'gemini']; const icons = { groq: '🚀', cerebras: '⚡', cloudflare: '☁️', gemini: '🤖' }; const names = { groq: 'Groq', cerebras: 'Cerebras', cloudflare: 'Cloudflare', gemini: 'Gemini' }; apis.forEach(api => { const btn = document.createElement('button'); btn.className = 'api-btn' + (api === currentApi ? ' active' : ''); btn.innerHTML = `${icons[api]} ${names[api]}`; btn.dataset.api = api; btn.onclick = () => switchApi(api); selector.appendChild(btn); }); }
+    
     document.getElementById('sendBtn').addEventListener('click', sendMessage);
     document.getElementById('newChatBtn').addEventListener('click', createNewChat);
     document.getElementById('newsTabBtn').addEventListener('click', showNewsTab);
@@ -595,22 +306,21 @@
     document.getElementById('shareTwitterBtn').addEventListener('click', shareToTwitter);
     document.getElementById('copyLinkBtn').addEventListener('click', copyChatLink);
     document.getElementById('closeShareBtn').addEventListener('click', closeShareModal);
-
+    
     const textarea = document.getElementById('userInput');
     textarea.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
     textarea.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
     document.addEventListener('click', (e) => { const menu = document.getElementById('userMenu'); const avatar = document.getElementById('userAvatar'); if (menu && !menu.contains(e.target) && !avatar.contains(e.target)) menu.classList.remove('show'); });
-
+    
     document.getElementById('statsCount').innerText = totalMessages;
     initLanguageSelector();
     initApiSelector();
     updateUserUI();
     loadUserData();
     updateUILanguage();
-
+    
     if (window.location.search.includes('share=')) { const shareId = new URLSearchParams(window.location.search).get('share'); setTimeout(() => { if (chats[shareId]) loadChat(shareId); }, 500); }
-
-    // Глобальные функции
+    
     window.showFullArticle = showFullArticle;
     window.closeArticleModal = closeArticleModal;
     window.likeArticle = likeArticle;
