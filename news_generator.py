@@ -431,7 +431,7 @@ def generate_news_html(article):
     }}
     </script>
 </body>
-</html>'''
+</html>
     
     html_path = f"news/{article_id}.html"
     with open(html_path, 'w', encoding='utf-8') as f:
