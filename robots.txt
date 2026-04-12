@@ -1,3 +1,14 @@
+# Разрешаем всем ботам индексацию
 User-agent: *
 Allow: /
+
+# Карта сайта
 Sitemap: https://cognify-ui.github.io/sitemap.xml
+
+# Запрещаем мусорные параметры
+Disallow: /*?share=
+Disallow: /*.json$
+Disallow: /news.json
+
+# Даём приоритет главной странице
+Host: https://cognify-ui.github.io
