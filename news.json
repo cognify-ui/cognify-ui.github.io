@@ -1,6 +1,23 @@
 {
-  "last_updated": "2026-04-12T09:39:34.098758",
+  "last_updated": "2026-04-12T09:51:15.174281",
   "articles": [
+    {
+      "id": "dbd3c1a67107",
+      "title": "Google представила Gemma Nano: новый сверхэффективный ИИ для локальных задач",
+      "summary": "Google анонсировала Gemma Nano, новую модель из семейства Gemma, разработанную для высокоэффективной работы на конечных устройствах и в сценариях с ограниченными ресурсами. Эта миниатюрная LLM обещает высокую производительность при значительно меньших требованиях к вычислительной мощности, что открывает новые возможности для автономных ИИ-приложений.",
+      "content": "Согласно сообщению TechCrunch, Google представила Gemma Nano, новейшее пополнение в своем семействе открытых моделей Gemma. Разработанная с акцентом на исключительную эффективность, Gemma Nano предназначена для развертывания непосредственно на конечных устройствах — от смартфонов до промышленных IoT-систем. Модель обеспечивает впечатляющую производительность для задач обработки естественного языка и генерации текста, потребляя при этом минимальные вычислительные ресурсы. Этот шаг является частью более широкой стратегии Google по демократизации доступа к мощному ИИ, позволяя разработчикам создавать более приватные и автономные приложения, которые не требуют постоянного подключения к облаку.",
+      "source": "TechCrunch",
+      "source_url": "https://cognify-ui.github.io/news/dbd3c1a67107",
+      "published_at": "2026-04-12T09:51:15.174274",
+      "tags": [
+        "Google",
+        "Gemma Nano",
+        "LLM",
+        "ИИ на устройстве",
+        "Эффективность ИИ"
+      ],
+      "image_url": "https://source.unsplash.com/800x400/?Google+представила+Gemma+Nano:+новый+сверхэффектив,ai,technology"
+    },
     {
       "id": "5184a275c86e",
       "title": "Meta выпустила новую версию Llama 3 с улучшенным рассуждением",
@@ -624,19 +641,6 @@
       "tags": [
         "openai",
         "ai"
-      ]
-    },
-    {
-      "id": "a102a18a5efc",
-      "title": "Anthropic launches Cowork, a Claude Desktop agent that works in your files — no coding required",
-      "summary": "Anthropic released Cowork on Monday, a new AI agent capability that extends the power of its wildly successful Claude Code tool to non-technical users — and according to company insiders, the team built the entire feature in approximately a week and a half, largely using Claude Code itself.The launc",
-      "content": "Anthropic released Cowork on Monday, a new AI agent capability that extends the power of its wildly successful Claude Code tool to non-technical users — and according to company insiders, the team built the entire feature in approximately a week and a half, largely using Claude Code itself.The launch marks a major inflection point in the race to deliver practical AI agents to mainstream users, positioning Anthropic to compete not just with OpenAI and Google in conversational AI, but with Microsoft&#x27;s Copilot in the burgeoning market for AI-powered productivity tools.&quot;Cowork lets you complete non-technical tasks much like how developers use Claude Code,&quot; the company announced via its official Claude account on X. The feature arrives as a research preview available exclusively to Claude Max subscribers — Anthropic&#x27;s power-user tier priced between $100 and $200 per month — through the macOS desktop application.For the past year, the industry narrative has focused on large language models that can write poetry or debug code. With Cowork, Anthropic is betting that the real enterprise value lies in an AI that can open a folder, read a messy pile of receipts, and generate a structured expense report without human hand-holding.How developers using a coding tool for vacation research inspired Anthropic&#x27;s latest productThe genesis of Cowork lies in Anthropic&#x27;s recent success with the developer community. In late 2024, the company released Claude Code, a ter",
-      "source": "AI | VentureBeat",
-      "source_url": "https://venturebeat.com/technology/anthropic-launches-cowork-a-claude-desktop-agent-that-works-in-your-files-no",
-      "published_at": "Mon, 12 Jan 2026 11:30:00 GMT",
-      "tags": [
-        "claude",
-        "anthropic"
       ]
     }
   ]
