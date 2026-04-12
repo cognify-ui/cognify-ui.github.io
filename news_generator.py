@@ -2,36 +2,37 @@
 import json
 import os
 import hashlib
-import requests
+import re
 from datetime import datetime
-from google import generativeai as genai
+import google.generativeai as genai
 
 NEWS_FILE = "news.json"
 MAX_ARTICLES = 50
 
-# Берём ключ из переменной окружения (GitHub Secrets)
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 if not GEMINI_API_KEY:
-    print("❌ Ошибка: GEMINI_API_KEY не найден в переменных окружения")
-    print("Добавьте секрет в GitHub: Settings → Secrets and variables → Actions")
+    print("❌ Ошибка: GEMINI_API_KEY не найден")
     exit(1)
 
+print(f"✅ API ключ найден: {GEMINI_API_KEY[:10]}...")
+
+# Используем доступную модель
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.0-flash-exp')
+model = genai.GenerativeModel('gemini-1.5-flash')  # ✅ Изменено!
 
 def generate_news():
     """Генерирует одну новость с помощью Gemini"""
     prompt = """
-Ты — журналист AI новостей. Сгенерируй ОДНУ свежую, правдоподобную новость из мира искусственного интеллекта.
+Ты — журналист AI новостей. Сгенерируй ОДНУ свежую новость из мира искусственного интеллекта.
 
 Требования:
-1. Новость должна звучать как реальная (можно выдуманную, но правдоподобную)
+1. Новость должна звучать как реальная
 2. Дата: сегодня или вчера
-3. Источник: реальное СМИ (The Verge, TechCrunch, Wired, VentureBeat, MIT Tech Review)
+3. Источник: The Verge, TechCrunch, Wired или VentureBeat
 4. Язык: русский
 
-Ответ должен быть строго в формате JSON:
+Ответ должен быть строго в формате JSON. НИКАКОГО дополнительного текста, только JSON:
 {
     "title": "Заголовок новости (до 80 символов)",
     "summary": "Краткое описание (2-3 предложения, до 300 символов)",
@@ -41,22 +42,20 @@ def generate_news():
 }
 """
     try:
+        print("🧠 Запрос к Gemini...")
         response = model.generate_content(prompt)
-        text = response.text
         
-        # Извлекаем JSON из ответа
-        start = text.find('{')
-        end = text.rfind('}') + 1
-        if start != -1 and end != 0:
-            json_str = text[start:end]
-            article = json.loads(json_str)
+        # Ищем JSON в ответе
+        json_match = re.search(r'\{.*\}', response.text, re.DOTALL)
+        if json_match:
+            article = json.loads(json_match.group())
+            print(f"✅ Получена новость: {article.get('title', 'Без заголовка')[:50]}...")
             return article
         else:
-            print("⚠️ Не удалось извлечь JSON из ответа")
-            print(f"Ответ: {text[:200]}...")
+            print(f"⚠️ Не найден JSON. Ответ: {response.text[:200]}")
             return None
     except Exception as e:
-        print(f"❌ Ошибка генерации новости: {e}")
+        print(f"❌ Ошибка Gemini: {e}")
         return None
 
 def generate_image_url(title):
@@ -72,23 +71,26 @@ def save_news_article(article):
         try:
             with open(NEWS_FILE, 'r', encoding='utf-8') as f:
                 existing = json.load(f)
-        except:
-            pass
+                print(f"📖 Загружено {len(existing.get('articles', []))} существующих новостей")
+        except Exception as e:
+            print(f"⚠️ Ошибка чтения: {e}")
     
+    # Создаём ID
     article_id = hashlib.md5(f"{article['title']}{datetime.now()}".encode()).hexdigest()[:12]
     
     new_article = {
         "id": article_id,
-        "title": article['title'],
-        "summary": article['summary'],
-        "content": article['content'],
+        "title": article.get('title', 'AI Новость'),
+        "summary": article.get('summary', ''),
+        "content": article.get('content', ''),
         "source": article.get('source', 'AI News'),
         "source_url": f"https://cognify-ui.github.io/news/{article_id}",
         "published_at": datetime.now().isoformat(),
         "tags": article.get('tags', ['ai', 'news']),
-        "image_url": generate_image_url(article['title'])
+        "image_url": generate_image_url(article.get('title', 'ai'))
     }
     
+    # Добавляем в начало
     existing['articles'].insert(0, new_article)
     existing['articles'] = existing['articles'][:MAX_ARTICLES]
     existing['last_updated'] = datetime.now().isoformat()
@@ -96,29 +98,30 @@ def save_news_article(article):
     with open(NEWS_FILE, 'w', encoding='utf-8') as f:
         json.dump(existing, f, ensure_ascii=False, indent=2)
     
-    print(f"✅ Добавлена новость: {article['title']}")
+    print(f"✅ Сохранено. Всего новостей: {len(existing['articles'])}")
     return True
 
 def main():
     print(f"🚀 Запуск генератора новостей Gemini: {datetime.now()}")
-    print(f"🔑 API ключ: {'✅ найден' if GEMINI_API_KEY else '❌ не найден'}")
     print("-" * 50)
     
-    print("🧠 Генерация новости через Gemini...")
+    # Генерируем новость
     article = generate_news()
     
     if article:
         save_news_article(article)
-        print(f"📰 Заголовок: {article['title']}")
-        print(f"📝 Кратко: {article['summary'][:100]}...")
+        print(f"📰 Заголовок: {article.get('title', 'Без заголовка')}")
+        print(f"📝 Кратко: {article.get('summary', '')[:100]}...")
     else:
         print("❌ Не удалось сгенерировать новость")
         
-        if not os.path.exists(NEWS_FILE):
+        # Создаём демо-новость, если файла нет
+        if not os.path.exists(NEWS_FILE) or os.path.getsize(NEWS_FILE) < 100:
+            print("📝 Создаём демо-новость...")
             demo_article = {
                 "title": "Добро пожаловать в Cognify AI!",
                 "summary": "Бесплатный доступ к 4 AI моделям: Groq, Cerebras, Cloudflare и Gemini",
-                "content": "Cognify AI — это бесплатный сервис с 4 мощными AI моделями. Без лимитов, с историей чатов и системой аккаунтов.",
+                "content": "Cognify AI — это бесплатный сервис с 4 мощными AI моделями. Без лимитов, с историей чатов и системой аккаунтов. Просто откройте сайт и начните общение!",
                 "source": "Cognify AI",
                 "tags": ["cognify", "ai", "бесплатно"]
             }
