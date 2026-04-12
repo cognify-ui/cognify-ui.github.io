@@ -1,148 +1,71 @@
 #!/usr/bin/env python3
 import json
-import hashlib
-import feedparser
-import re
 import os
-import time
+import hashlib
+import requests
 from datetime import datetime
+from google import generativeai as genai
 
 NEWS_FILE = "news.json"
-MAX_ARTICLES = 100  # Увеличено с 50 до 100
+MAX_ARTICLES = 50
 
-# РАСШИРЕННЫЙ список RSS источников (15 источников вместо 5)
-RSS_SOURCES = [
-    # Крупные технологические издания
-    "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
-    "https://venturebeat.com/category/ai/feed/",
-    "https://www.zdnet.com/topic/artificial-intelligence/rss.xml",
-    "https://www.techcrunch.com/category/artificial-intelligence/feed/",
-    "https://www.wired.com/category/artificial-intelligence/feed/rss",
-    
-    # Научные и исследовательские
-    "https://www.sciencedaily.com/rss/computers_math/artificial_intelligence.xml",
-    "https://news.mit.edu/topic/artificial-intelligence2-rss.xml",
-    "https://www.newscientist.com/subject/ai/feed/",
-    "https://www.nature.com/subjects/artificial-intelligence.rss",
-    
-    # AI сообщества и разработчики
-    "https://towardsdatascience.com/feed/tagged/ai",
-    "https://medium.com/feed/tag/artificial-intelligence",
-    "https://huggingface.co/blog/feed.xml",
-    "https://deepmind.com/blog/feed/basic",
-    
-    # Дополнительные новости
-    "https://www.ibm.com/blogs/artificial-intelligence/feed/",
-    "https://www.microsoft.com/en-us/research/blog/feed/"
-]
+# Берём ключ из переменной окружения (GitHub Secrets)
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
-def clean_html(text):
-    """Удаляет HTML теги"""
-    if not text:
-        return ""
-    text = re.sub(r'<[^>]+>', '', text)
-    text = re.sub(r'\s+', ' ', text)
-    return text.strip()
+if not GEMINI_API_KEY:
+    print("❌ Ошибка: GEMINI_API_KEY не найден в переменных окружения")
+    print("Добавьте секрет в GitHub: Settings → Secrets and variables → Actions")
+    exit(1)
 
-def generate_tags(title):
-    """Генерирует теги из заголовка (расширенный список)"""
-    title_lower = title.lower()
-    tags = []
-    
-    keywords = {
-        # Компании
-        'openai': 'openai', 'chatgpt': 'chatgpt', 'gpt': 'gpt',
-        'google': 'google', 'gemini': 'gemini', 'deepmind': 'deepmind',
-        'anthropic': 'anthropic', 'claude': 'claude',
-        'meta': 'meta', 'llama': 'llama',
-        'microsoft': 'microsoft', 'copilot': 'copilot',
-        'apple': 'apple', 'siri': 'siri',
-        'amazon': 'amazon', 'alexa': 'alexa',
-        'tesla': 'tesla', 'xai': 'xai',
-        
-        # Технологии
-        'groq': 'groq', 'cerebras': 'cerebras',
-        'mistral': 'mistral', 'cohere': 'cohere',
-        'stability': 'stability', 'midjourney': 'midjourney',
-        
-        # Общие темы
-        'robot': 'роботы', 'нейросеть': 'нейросети',
-        'ml': 'ml', 'ai': 'ai', 'agi': 'agi',
-        'чип': 'чипы', 'gpu': 'gpu', 'nvidia': 'nvidia'
-    }
-    
-    for key, tag in keywords.items():
-        if key in title_lower:
-            tags.append(tag)
-    
-    # Убираем дубликаты и ограничиваем
-    unique_tags = list(dict.fromkeys(tags))
-    return unique_tags[:5] if unique_tags else ['ai', 'news']
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash-exp')
 
-def fetch_rss(url):
-    """Получает новости из RSS"""
+def generate_news():
+    """Генерирует одну новость с помощью Gemini"""
+    prompt = """
+Ты — журналист AI новостей. Сгенерируй ОДНУ свежую, правдоподобную новость из мира искусственного интеллекта.
+
+Требования:
+1. Новость должна звучать как реальная (можно выдуманную, но правдоподобную)
+2. Дата: сегодня или вчера
+3. Источник: реальное СМИ (The Verge, TechCrunch, Wired, VentureBeat, MIT Tech Review)
+4. Язык: русский
+
+Ответ должен быть строго в формате JSON:
+{
+    "title": "Заголовок новости (до 80 символов)",
+    "summary": "Краткое описание (2-3 предложения, до 300 символов)",
+    "content": "Полный текст новости (3-5 предложений, до 1000 символов)",
+    "source": "Название источника",
+    "tags": ["тег1", "тег2", "тег3"]
+}
+"""
     try:
-        feedparser.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-        feed = feedparser.parse(url)
+        response = model.generate_content(prompt)
+        text = response.text
         
-        if feed.bozo:
-            print(f"   ⚠️ Предупреждение: {str(feed.bozo_exception)[:80]}")
-        
-        if not feed.entries:
-            return []
-        
-        articles = []
-        # Берём до 7 статей из каждого источника (было 5)
-        for entry in feed.entries[:7]:
-            link = entry.get('link', '')
-            if not link:
-                continue
-                
-            article_id = hashlib.md5(link.encode()).hexdigest()[:12]
-            title = clean_html(entry.get('title', ''))[:120]
-            
-            if not title:
-                title = "AI Новость"
-            
-            # Получаем описание
-            summary = clean_html(entry.get('summary', ''))
-            if not summary:
-                summary = clean_html(entry.get('description', ''))
-            if not summary:
-                summary = f"{title}."
-            
-            # Получаем полный текст
-            content = ""
-            if entry.get('content'):
-                content = clean_html(entry['content'][0].get('value', ''))
-            if not content and summary:
-                content = summary
-            if not content:
-                content = title
-            
-            # Дата публикации
-            pub_date = entry.get('published', entry.get('updated', ''))
-            if not pub_date:
-                pub_date = datetime.now().isoformat()
-            
-            articles.append({
-                "id": article_id,
-                "title": title,
-                "summary": summary[:350],
-                "content": content[:2000],
-                "link": link,
-                "published": pub_date,
-                "source": feed.feed.get('title', url.split('/')[2])
-            })
-        
-        return articles
-        
+        # Извлекаем JSON из ответа
+        start = text.find('{')
+        end = text.rfind('}') + 1
+        if start != -1 and end != 0:
+            json_str = text[start:end]
+            article = json.loads(json_str)
+            return article
+        else:
+            print("⚠️ Не удалось извлечь JSON из ответа")
+            print(f"Ответ: {text[:200]}...")
+            return None
     except Exception as e:
-        print(f"   ❌ Ошибка: {str(e)[:100]}")
-        return []
+        print(f"❌ Ошибка генерации новости: {e}")
+        return None
 
-def update_news_json(new_articles):
-    """Обновляет файл новостей"""
+def generate_image_url(title):
+    """Генерирует URL картинки через Unsplash"""
+    query = title.replace(' ', '+')[:50]
+    return f"https://source.unsplash.com/800x400/?{query},ai,technology"
+
+def save_news_article(article):
+    """Сохраняет новость в news.json"""
     existing = {"last_updated": "", "articles": []}
     
     if os.path.exists(NEWS_FILE):
@@ -152,104 +75,54 @@ def update_news_json(new_articles):
         except:
             pass
     
-    existing_ids = {a.get('id') for a in existing.get('articles', [])}
+    article_id = hashlib.md5(f"{article['title']}{datetime.now()}".encode()).hexdigest()[:12]
     
-    new_count = 0
-    for article in new_articles:
-        if article['id'] in existing_ids:
-            continue
-        
-        formatted = {
-            "id": article['id'],
-            "title": article['title'],
-            "summary": article['summary'],
-            "content": article['content'],
-            "source": article.get('source', 'AI News'),
-            "source_url": article.get('link', ''),
-            "published_at": article.get('published', datetime.now().isoformat()),
-            "tags": generate_tags(article['title'])
-        }
-        
-        existing['articles'].insert(0, formatted)
-        new_count += 1
+    new_article = {
+        "id": article_id,
+        "title": article['title'],
+        "summary": article['summary'],
+        "content": article['content'],
+        "source": article.get('source', 'AI News'),
+        "source_url": f"https://cognify-ui.github.io/news/{article_id}",
+        "published_at": datetime.now().isoformat(),
+        "tags": article.get('tags', ['ai', 'news']),
+        "image_url": generate_image_url(article['title'])
+    }
     
-    # Ограничиваем до 100 статей
+    existing['articles'].insert(0, new_article)
     existing['articles'] = existing['articles'][:MAX_ARTICLES]
     existing['last_updated'] = datetime.now().isoformat()
     
     with open(NEWS_FILE, 'w', encoding='utf-8') as f:
         json.dump(existing, f, ensure_ascii=False, indent=2)
     
-    return new_count
-
-def create_demo_news():
-    """Создаёт демо-новости при первом запуске"""
-    demo_articles = [
-        {
-            "id": "welcome1",
-            "title": "🎉 Добро пожаловать в Cognify AI!",
-            "summary": "Бесплатный доступ к 4 AI моделям: Groq, Cerebras, Cloudflare и Gemini",
-            "content": "Cognify AI — это бесплатный сервис с 4 мощными AI моделями. Без лимитов, с историей чатов и системой аккаунтов.",
-            "source": "Cognify AI",
-            "source_url": "https://cognify-ui.github.io",
-            "published_at": datetime.now().isoformat(),
-            "tags": ["cognify", "ai", "бесплатно"]
-        }
-    ]
-    
-    with open(NEWS_FILE, 'w', encoding='utf-8') as f:
-        json.dump({
-            "last_updated": datetime.now().isoformat(),
-            "articles": demo_articles
-        }, f, ensure_ascii=False, indent=2)
-    
-    print("📝 Создан демо-файл с новостями")
+    print(f"✅ Добавлена новость: {article['title']}")
+    return True
 
 def main():
-    print(f"🚀 Запуск генератора новостей: {datetime.now()}")
-    print(f"📡 RSS источников: {len(RSS_SOURCES)}")
-    print(f"📊 Максимум статей: {MAX_ARTICLES}")
-    print("-" * 60)
+    print(f"🚀 Запуск генератора новостей Gemini: {datetime.now()}")
+    print(f"🔑 API ключ: {'✅ найден' if GEMINI_API_KEY else '❌ не найден'}")
+    print("-" * 50)
     
-    all_articles = []
-    successful_sources = 0
+    print("🧠 Генерация новости через Gemini...")
+    article = generate_news()
     
-    for url in RSS_SOURCES:
-        source_name = url.split('/')[2]
-        print(f"📥 Парсинг: {source_name}...")
-        articles = fetch_rss(url)
-        if articles:
-            successful_sources += 1
-            print(f"   ✅ Получено: {len(articles)} статей")
-            all_articles.extend(articles)
-        else:
-            print(f"   ⚠️ Не удалось загрузить")
-        time.sleep(0.5)  # Небольшая пауза
-    
-    # Удаляем дубликаты
-    unique = []
-    seen_links = set()
-    for a in all_articles:
-        if a['link'] not in seen_links:
-            seen_links.add(a['link'])
-            unique.append(a)
-    
-    print("-" * 60)
-    print(f"📊 Успешных источников: {successful_sources}/{len(RSS_SOURCES)}")
-    print(f"📊 Уникальных статей: {len(unique)}")
-    
-    if unique:
-        new_count = update_news_json(unique)
-        print(f"✨ Добавлено новых: {new_count}")
-        
-        with open(NEWS_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            print(f"📄 Всего в файле: {len(data['articles'])} статей")
-            print(f"🕐 Последнее обновление: {data['last_updated']}")
+    if article:
+        save_news_article(article)
+        print(f"📰 Заголовок: {article['title']}")
+        print(f"📝 Кратко: {article['summary'][:100]}...")
     else:
-        print("⚠️ Не найдено новых статей из RSS")
-        if not os.path.exists(NEWS_FILE) or os.path.getsize(NEWS_FILE) < 100:
-            create_demo_news()
+        print("❌ Не удалось сгенерировать новость")
+        
+        if not os.path.exists(NEWS_FILE):
+            demo_article = {
+                "title": "Добро пожаловать в Cognify AI!",
+                "summary": "Бесплатный доступ к 4 AI моделям: Groq, Cerebras, Cloudflare и Gemini",
+                "content": "Cognify AI — это бесплатный сервис с 4 мощными AI моделями. Без лимитов, с историей чатов и системой аккаунтов.",
+                "source": "Cognify AI",
+                "tags": ["cognify", "ai", "бесплатно"]
+            }
+            save_news_article(demo_article)
     
     print("✅ Готово!")
 
