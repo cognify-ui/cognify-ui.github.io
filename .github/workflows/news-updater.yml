@@ -18,7 +18,9 @@ jobs:
           python-version: '3.11'
       
       - name: Install dependencies
-        run: pip install google-genai
+        run: |
+          pip install --upgrade pip
+          pip install google-genai requests beautifulsoup4
       
       - name: Generate news
         env:
