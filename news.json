@@ -1,6 +1,30 @@
 {
-  "last_updated": "2026-04-13T01:40:33.052819",
+  "last_updated": "2026-04-13T01:55:28.829606",
   "articles": [
+    {
+      "id": "1cef0a67e3c2",
+      "title": "Прорыв в межзвездной навигации: Аппарат 'Звездный Странник' передал первые данные о новой экзопланете с потенциалом для жизни",
+      "summary": "Сегодня, 13 апреля 2026 года, миссия межзвездного зонда 'Звездный Странник' достигла исторического рубежа. Аппарат, запущенный в 2038 году, успешно передал первые подробные спектральные данные о ранее неизвестной экзопланете, вращающейся вокруг звезды спектрального класса G, расположенной на расстоянии 42 световых лет от Земли. Анализ показывает наличие атмосферы с примесью кислорода и воды, что делает ее одним из наиболее перспективных кандидатов для поиска внеземной жизни.",
+      "content": "13 April 2026 года – День, который, возможно, войдет в учебники истории космонавтики. Межзвездный зонд 'Звездный Странник', отправленный в экспедицию к ближайшим звездным системам, сегодня успешно завершил первый этап своей миссии, передав бесценные научные данные о новой экзопланете, получившей предварительное обозначение Kepler-186f II.\n\n\"Это момент, о котором мы мечтали десятилетиями,\" – делится эмоциями доктор Эвелин Рид, ведущий астрофизик проекта 'Звездный Странник' из Института астробиологии Калифорнийского университета. \"Мы получили подтверждение существования планеты, чьи параметры удивительно близки к Земле. Диаметр Kepler-186f II составляет примерно 1.1 радиуса Земли, а ее масса оценивается в 1.3 земных масс. Она находится в так называемой 'зоне обитаемости' своей звезды, что означает возможность существования жидкой воды на ее поверхности.\"\n\nОсобый интерес представляют спектральные данные, полученные с помощью бортового спектрометра высокой разрешающей способности. Анализ показал наличие в атмосфере Kepler-186f II значительных объемов кислорода (около 15%), азота (78%) и, что самое поразительное, следов водяного пара. \"Обнаружение кислорода в таком количестве, без видимых абиотических источников, наводит на мысль о биологической активности,\" – поясняет доктор Рид. \"Конечно, преждевременно говорить о жизни, но это самая сильная косвенная улика, которую мы когда-либо получали.\"\n\n'Звездный Странник' движется со средней скоростью 0.1 скорости света, используя инновационную систему термоядерного двигателя, разработанного корпорацией 'AstroDynamics'. На сегодняшний день, 13 April 2026 года, аппарат преодолел расстояние в 4.2 световых года от Солнечной системы, что составляет примерно 10% пути до ближайшей к нам звезды после Солнца – Проксимы Центавра. Время, потраченное на полет к Kepler-186f II, составило 28 лет, что является беспрецедентным достижением для межзвездных путешествий.\n\n\"Проект 'Звездный Странник' – это демонстрация нашего стремления к познанию Вселенной,\" – заявил на экстренной пресс-конференции директор Европейского космического агентства (ЕКА), доктор Жан-Поль Дюбуа. \"После десятилетий планирования и разработки, мы наконец-то получили возможность напрямую исследовать потенциально обитаемые миры. Данные, полученные 'Странником', открывают новую эру в астробиологии и, возможно, в понимании нашего места во Вселенной.\"\n\nКлючевым фактором в успехе миссии стало использование нового поколения фотонных коммуникаторов, способных передавать информацию с минимальными потерями сигнала на огромные расстояния. Несмотря на колоссальное расстояние, сигнал от 'Звездного Странника' был получен с четкостью, позволяющей провести детальный анализ. \"Мы ожидали некоторого снижения качества, но реальность превзошла наши ожидания. Скорость передачи данных составила около 800 терабит в секунду, что позволило нам получить огромный массив информации за относительно короткое время,\" – отметил профессор Алексей Смирнов, руководитель Центра дальней космической связи.\n\nСледующим шагом для 'Звездного Странника' станет более детальное картографирование поверхности Kepler-186f II и поиск дополнительных биомаркеров в атмосфере. Эксперты предполагают, что последующие данные могут поступить уже через 3-4 месяца, по мере того, как аппарат будет совершать дополнительные маневры для приближения к планете. \"Мы на пороге великих открытий. Этот момент – результат упорного труда тысяч ученых и инженеров по всему миру. Надеюсь, что 'Звездный Странник' продолжит радовать нас новыми сенсационными данными,\" – подытожил доктор Рид.\n\nНапомним, что миссия 'Звездный Странник' была запущена в 2038 году совместными усилиями NASA, ЕКА и ряда частных космических корпораций. Общий бюджет проекта составил более 500 миллиардов долларов, что делает его одним из самых дорогостоящих научных начинаний в истории человечества.",
+      "source": "TechCrunch",
+      "source_url": "https://cognify-ui.github.io/news/1cef0a67e3c2.html",
+      "published_at": "2026-04-13T01:55:28.829587",
+      "tags": [
+        "космос",
+        "экзопланеты",
+        "астробиология",
+        "Звездный Странник",
+        "13.04.2026"
+      ],
+      "seo_topic": "космос",
+      "used_model": "gemini-2.5-flash-lite",
+      "image_url": "https://api.dicebear.com/7.x/bottts/svg?seed=1cef0a67e3c2&backgroundColor=6366f1&radius=50",
+      "seo_metadata": {
+        "meta_title": "Прорыв в межзвездной навигации: Аппарат 'Звездный Странник' передал первые данные о новой экзопланете с потенциалом для жизни | Cognify AI News",
+        "meta_description": "Сегодня, 13 апреля 2026 года, миссия межзвездного зонда 'Звездный Странник' достигла исторического рубежа. Аппарат, запущенный в 2038 году, успешно передал перв",
+        "meta_keywords": "космос, экзопланеты, астробиология, Звездный Странник, 13.04.2026"
+      }
+    },
     {
       "id": "21e571515c94",
       "title": "Революция в регенеративной медицине: ученые из \"Бионикс\" представили первую полностью биоразлагаемую искусственную ткань сердца, выращенную с помощью 3D-биопринтинга",
@@ -1076,18 +1100,6 @@
       "tags": [
         "ai",
         "news"
-      ]
-    },
-    {
-      "id": "f3bf558746c7",
-      "title": "GroundedPlanBench: Spatially grounded long-horizon task planning for robot manipulation",
-      "summary": "Vision-language models (VLMs) use images and text to plan robot actions, but they still struggle to decide what actions to take and where to take them. Most systems split these decisions into two steps: a VLM generates a plan in natural language, and a separate model translates it into executable actions. This approach often breaks [&#8230;] The po",
-      "content": "At a glance VLM-based robot planners struggle with long, complex tasks because natural-language plans can be ambiguous, especially when specifying both actions and locations. GroundedPlanBench evaluates whether models can plan actions and determine where they should occur across diverse, real-world robot scenarios. Video-to-Spatially Grounded Planning (V2GP) is a framework that converts robot demonstration videos into spatially grounded training data, enabling models to learn planning and grounding jointly. Grounded planning improves both task success and action accuracy, outperforming decoupled approaches in benchmark and real-world evaluations. Vision-language models (VLMs) use images and text to plan robot actions, but they still struggle to decide what actions to take and where to take them. Most systems split these decisions into two steps: a VLM generates a plan in natural language, and a separate model translates it into executable actions. This approach often breaks down for long, complex tasks because natural-language plans can be ambiguous or even hallucinated when specifying actions and locations (Figure 1). Because planning and spatial reasoning are handled separately, errors in one stage can propagate to the next. This raises a key question: can a VLM determine both what to do and where to do it simultaneously? Figure 1. Failures in VLM-based task planners, where ambiguous language leads to non-executable actions. Planning with spatial grounding To address this problem, we developed GroundedPlanBench (opens in new tab). In our paper, “Spatially Grounded Long-Horizon Task Planning in the Wild,” we describe how this new benchmark evaluates whether VLMs can plan actions and determine where those actions should occur across diverse real-world environments. We also built Video-to-Spatially Grounded Planning (V2GP), a framework that converts robot demonstration videos into training data to help VLMs learn this capability. Evaluating these with both open- and ",
-      "source": "Microsoft Research Blog - Microsoft Research",
-      "source_url": "https://www.microsoft.com/en-us/research/blog/groundedplanbench-spatially-grounded-long-horizon-task-planning-for-robot-manipulation/",
-      "published_at": "Thu, 26 Mar 2026 16:03:56 +0000",
-      "tags": [
-        "роботы"
       ]
     }
   ],
