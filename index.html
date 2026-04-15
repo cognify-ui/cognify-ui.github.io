@@ -16,14 +16,11 @@
     <meta name="keywords" content="нейросеть, искусственный интеллект, ChatGPT, Google Gemini, AI новости">
     <meta name="author" content="Cognify AI">
     <meta name="robots" content="index, follow">
-    
     <meta property="og:title" content="Cognify AI - Free AI Chatbot">
     <meta property="og:description" content="Free access to 4 AI models">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cognify-ui.github.io">
-    
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
-    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100vh; }
@@ -86,13 +83,12 @@
         .message-content { flex: 1; line-height: 1.5; font-size: 15px; color: #212529; }
         .message-content pre { background: #f8f9fa; padding: 12px; border-radius: 10px; overflow-x: auto; margin: 8px 0; }
         .message-content code { background: #f8f9fa; padding: 2px 6px; border-radius: 6px; font-family: monospace; font-size: 13px; }
-        
-        /* ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ УЛУЧШЕНИЙ */
-        .prompt-chip { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 20px; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-        .prompt-chip:hover { background: #667eea; color: white; border-color: #667eea; transform: translateY(-2px); }
         .message-actions { display: flex; gap: 8px; margin-top: 8px; opacity: 0.7; transition: opacity 0.2s; }
         .action-btn { background: transparent; border: none; cursor: pointer; padding: 4px 8px; border-radius: 6px; font-size: 12px; }
         .action-btn:hover { background: rgba(0,0,0,0.05); }
+        
+        .prompt-chip { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 20px; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .prompt-chip:hover { background: #667eea; color: white; border-color: #667eea; transform: translateY(-2px); }
         .theme-toggle { cursor: pointer; padding: 8px; border-radius: 50%; background: #f8f9fa; margin-left: 8px; transition: all 0.3s; }
         
         /* Индикатор печати */
@@ -140,6 +136,7 @@
         .article-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
         .article-modal.show { display: flex; }
         .article-modal-content { background: white; border-radius: 20px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 24px; position: relative; }
+        .close-article-modal { position: absolute; top: 12px; right: 20px; font-size: 24px; background: none; border: none; cursor: pointer; }
         
         /* Toast */
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #212529; border-radius: 30px; padding: 10px 20px; color: white; font-size: 13px; z-index: 1100; animation: fadeIn 0.3s; }
@@ -156,6 +153,8 @@
             .sidebar { position: fixed; left: -280px; height: 100vh; }
             .sidebar.open { left: 0; }
             .menu-toggle { display: block; }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 90; }
+            .sidebar-overlay.show { display: block; }
         }
     </style>
 </head>
@@ -186,6 +185,7 @@
                         <div class="user-menu-item" id="userNameDisplay">👤 Гость</div>
                         <div class="user-menu-item" id="loginMenuItem">🔑 Войти / Регистрация</div>
                         <div class="user-menu-item" id="exportMenuItem">📥 Экспорт чатов</div>
+                        <div class="user-menu-item" id="importMenuItem">📤 Импорт чатов</div>
                         <div class="user-menu-item" id="clearMenuItem">🗑️ Очистить всё</div>
                         <div class="user-menu-divider"></div>
                         <div class="user-menu-item logout-item" id="logoutMenuItem">🚪 Выйти</div>
@@ -299,7 +299,6 @@
     function updateUILanguage() { document.getElementById('userInput').placeholder = t('placeholder'); document.getElementById('sendBtn').innerHTML = t('send'); updateWelcomeMessage(); }
     function switchLanguage(lang) { currentLang = lang; localStorage.setItem('language', lang); document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang)); updateUILanguage(); }
     
-    // Чат
     function loadUserData() {
         const key = currentUser ? `chats_${currentUser}` : 'chats_guest';
         const saved = localStorage.getItem(key);
@@ -319,7 +318,6 @@
     function createNewChat() { currentChatId = Date.now().toString(); chats[currentChatId] = { id: currentChatId, title: 'Новый чат', messages: [{ role: 'bot', content: 'Привет! Я Cognify AI. Задай любой вопрос!' }], createdAt: new Date().toISOString() }; saveUserData(); renderHistory(); loadChat(currentChatId); showToast('✨ Новый чат'); }
     function loadChat(chatId) { currentChatId = chatId; const chat = chats[chatId]; if (!chat) return; document.getElementById('chatTitle').innerText = chat.title; const messagesArea = document.getElementById('messagesArea'); messagesArea.innerHTML = ''; chat.messages.forEach(msg => addMessageToUI(msg.content, msg.role === 'user')); document.querySelectorAll('.history-item').forEach(el => { el.classList.remove('active'); if (el.dataset.id === chatId) el.classList.add('active'); }); }
     
-    // ОСНОВНАЯ ФУНКЦИЯ addMessageToUI С КНОПКОЙ КОПИРОВАНИЯ
     async function addMessageToUI(text, isUser) {
         const messagesArea = document.getElementById('messagesArea');
         const div = document.createElement('div');
@@ -328,8 +326,6 @@
         if (!isUser) { try { content = await marked.parse(text); } catch(e) { content = formatMessage(text); } }
         else { content = formatMessage(text); }
         div.innerHTML = `<div class="message-avatar">${isUser ? '👤' : '🧠'}</div><div class="message-content">${content}</div>`;
-        
-        // Кнопка копирования для ответов бота
         if (!isUser) {
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'message-actions';
@@ -339,7 +335,6 @@
             div.addEventListener('mouseenter', () => actionsDiv.style.opacity = '1');
             div.addEventListener('mouseleave', () => actionsDiv.style.opacity = '0.7');
         }
-        
         messagesArea.appendChild(div);
         messagesArea.scrollTop = messagesArea.scrollHeight;
     }
@@ -373,7 +368,6 @@
         });
     }
     
-    // Модальное подтверждение
     function showConfirmModal(title, message, onConfirm) {
         const modal = document.getElementById('customConfirmModal');
         document.getElementById('confirmTitle').innerText = title;
@@ -437,7 +431,6 @@
         sendBtn.disabled = false;
     }
     
-    // Новости
     function saveNewsStats() { localStorage.setItem('newsStats', JSON.stringify(newsStats)); }
     window.likeArticle = function(articleId, btn) {
         if (!newsStats[articleId]) newsStats[articleId] = { views: 0, likes: 0 };
@@ -459,7 +452,6 @@
         if (newCount > 0) { document.getElementById('newsBadge').textContent = newCount; document.getElementById('newsBadge').style.display = 'inline'; }
         localStorage.setItem('lastNewsVisit', new Date().toISOString());
     }
-    window.shareNews = function(articleId, platform) { const article = allNews.find(a => a.id === articleId); if (article) navigator.clipboard.writeText(article.source_url || window.location.href); showToast('Ссылка скопирована!'); };
     window.showFullArticle = function(articleId) { const article = allNews.find(a => a.id === articleId); if (!article) return; let modal = document.getElementById('articleModal'); if (!modal) { modal = document.createElement('div'); modal.id = 'articleModal'; modal.className = 'article-modal'; modal.innerHTML = `<div class="article-modal-content"><button class="close-article-modal" onclick="window.closeArticleModal()">✖</button><div id="articleModalBody"></div></div>`; document.body.appendChild(modal); } document.getElementById('articleModalBody').innerHTML = `<h2>${escapeHtml(article.title)}</h2><div style="margin:16px 0">${escapeHtml(article.content || article.summary || '')}</div>`; modal.classList.add('show'); };
     window.closeArticleModal = function() { const modal = document.getElementById('articleModal'); if (modal) modal.classList.remove('show'); };
     async function loadNews() {
@@ -474,7 +466,6 @@
         } catch(error) { if (newsListDiv) newsListDiv.innerHTML = `<div class="news-empty">${t('load_error')}</div>`; }
     }
     
-    // UI функции
     window.toggleSidebar = function() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('show'); };
     window.closeSidebar = function() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); };
     window.toggleUserMenu = function() { document.getElementById('userMenu').classList.toggle('show'); };
@@ -489,7 +480,6 @@
     function shareToVK() { window.open(`https://vk.com/share.php?url=${encodeURIComponent(window.location.href)}&title=Cognify%20AI`, '_blank'); }
     function shareToTwitter() { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getChatText().substring(0, 280))}&url=${encodeURIComponent(window.location.href)}`, '_blank'); }
     
-    // Авторизация
     function showAuthModal() { authMode = 'login'; document.getElementById('authTitle').innerHTML = '🔐 Вход'; document.getElementById('authSubmitBtn').innerHTML = 'Войти'; document.getElementById('authSwitch').innerHTML = 'Нет аккаунта? Зарегистрироваться'; document.getElementById('authModal').classList.add('show'); }
     function toggleAuthMode() { if (authMode === 'login') { authMode = 'register'; document.getElementById('authTitle').innerHTML = '📝 Регистрация'; document.getElementById('authSubmitBtn').innerHTML = 'Зарегистрироваться'; document.getElementById('authSwitch').innerHTML = 'Уже есть аккаунт? Войти'; } else { authMode = 'login'; document.getElementById('authTitle').innerHTML = '🔐 Вход'; document.getElementById('authSubmitBtn').innerHTML = 'Войти'; document.getElementById('authSwitch').innerHTML = 'Нет аккаунта? Зарегистрироваться'; } }
     function authSubmit() {
@@ -521,11 +511,9 @@
     function exportAllChats() { const data = JSON.stringify(chats, null, 2); const blob = new Blob([data], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `cognify-chats-${Date.now()}.json`; a.click(); URL.revokeObjectURL(url); showToast('Экспорт завершен'); }
     function importChats() { const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json'; input.onchange = (e) => { const file = e.target.files[0]; const reader = new FileReader(); reader.onload = (event) => { try { const imported = JSON.parse(event.target.result); chats = imported; saveUserData(); renderHistory(); loadChat(Object.keys(chats)[0]); showToast('Импорт завершён'); } catch(err) { showToast('Ошибка импорта', true); } }; reader.readAsText(file); }; input.click(); }
     
-    // Инициализация
     function initLanguageSelector() { const selector = document.getElementById('languageSelector'); selector.innerHTML = ''; for (const [code, name] of Object.entries(languages)) { const btn = document.createElement('button'); btn.className = 'lang-btn' + (code === currentLang ? ' active' : ''); btn.textContent = name; btn.dataset.lang = code; btn.onclick = () => switchLanguage(code); selector.appendChild(btn); } }
     function initApiSelector() { const selector = document.getElementById('apiSelector'); selector.innerHTML = ''; const apis = ['groq', 'cerebras', 'cloudflare', 'gemini']; const icons = { groq: '🚀', cerebras: '⚡', cloudflare: '☁️', gemini: '🤖' }; const names = { groq: 'Groq', cerebras: 'Cerebras', cloudflare: 'Cloudflare', gemini: 'Gemini' }; apis.forEach(api => { const btn = document.createElement('button'); btn.className = 'api-btn' + (api === currentApi ? ' active' : ''); btn.innerHTML = `${icons[api]} ${names[api]}`; btn.dataset.api = api; btn.onclick = () => switchApi(api); selector.appendChild(btn); }); }
     
-    // Тёмная тема
     function initDarkTheme() {
         const themeToggle = document.createElement('div');
         themeToggle.className = 'theme-toggle';
@@ -536,7 +524,6 @@
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
     }
     
-    // Примеры промптов
     function addPromptExamples() {
         const inputArea = document.querySelector('.input-area');
         if (document.querySelector('.prompt-examples')) return;
@@ -548,18 +535,6 @@
         document.querySelectorAll('.prompt-chip').forEach(chip => { chip.onclick = () => { document.getElementById('userInput').value = chip.dataset.prompt; sendMessage(); }; });
     }
     
-    // Добавляем импорт в меню
-    const exportMenuItem = document.getElementById('exportMenuItem');
-    if (exportMenuItem && !document.getElementById('importMenuItem')) {
-        const importMenuItem = document.createElement('div');
-        importMenuItem.id = 'importMenuItem';
-        importMenuItem.className = 'user-menu-item';
-        importMenuItem.innerHTML = '📤 Импорт чатов';
-        importMenuItem.onclick = importChats;
-        exportMenuItem.parentNode.insertBefore(importMenuItem, exportMenuItem.nextSibling);
-    }
-    
-    // События
     document.getElementById('sendBtn').addEventListener('click', sendMessage);
     document.getElementById('newChatBtn').addEventListener('click', createNewChat);
     document.getElementById('newsTabBtn').addEventListener('click', window.showNewsTab);
@@ -567,6 +542,7 @@
     document.getElementById('closeNewsBtn').addEventListener('click', window.closeNewsTab);
     document.getElementById('loginMenuItem').addEventListener('click', showAuthModal);
     document.getElementById('exportMenuItem').addEventListener('click', exportAllChats);
+    document.getElementById('importMenuItem').addEventListener('click', importChats);
     document.getElementById('clearMenuItem').addEventListener('click', clearAllData);
     document.getElementById('logoutMenuItem').addEventListener('click', logout);
     document.getElementById('authSubmitBtn').addEventListener('click', authSubmit);
@@ -601,18 +577,6 @@
     window.openShareModal = window.openShareModal;
     window.showNewsTab = window.showNewsTab;
     window.closeNewsTab = window.closeNewsTab;
-    window.showAuthModal = showAuthModal;
-    window.toggleAuthMode = toggleAuthMode;
-    window.authSubmit = authSubmit;
-    window.logout = logout;
-    window.clearAllData = clearAllData;
-    window.exportAllChats = exportAllChats;
-    window.shareToTelegram = shareToTelegram;
-    window.shareToWhatsApp = shareToWhatsApp;
-    window.shareToVK = shareToVK;
-    window.shareToTwitter = shareToTwitter;
-    window.copyChatLink = copyChatLink;
-    window.closeShareModal = closeShareModal;
 })();
 </script>
 </body>
