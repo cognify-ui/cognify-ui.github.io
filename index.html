@@ -11,13 +11,13 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Cognify AI | Нейросеть с контекстом диалога + Новости AI</title>
-    <meta name="description" content="Cognify AI — бесплатная нейросеть с доступом к 4 AI моделям">
-    <meta name="keywords" content="нейросеть, искусственный интеллект, ChatGPT, Google Gemini, AI новости">
+    <title>Cognify AI | Нейросеть + Новости AI</title>
+    <meta name="description" content="Cognify AI — бесплатная нейросеть с доступом к 4 AI моделям и свежими новостями ИИ">
+    <meta name="keywords" content="нейросеть, искусственный интеллект, ChatGPT, Google Gemini, AI новости, Groq, Cerebras">
     <meta name="author" content="Cognify AI">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Cognify AI - Free AI Chatbot">
-    <meta property="og:description" content="Free access to 4 AI models">
+    <meta property="og:description" content="Free access to 4 AI models + AI News">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cognify-ui.github.io">
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
@@ -108,22 +108,25 @@
         
         /* Новости */
         .news-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 50; overflow-y: auto; display: none; }
-        .news-header { padding: 16px 24px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; background: white; position: sticky; top: 0; }
+        .news-header { padding: 16px 24px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; background: white; position: sticky; top: 0; z-index: 10; }
         .news-list { padding: 20px; }
-        .news-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid #e9ecef; transition: all 0.3s; cursor: pointer; }
-        .news-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: #667eea; }
-        .news-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-        .news-meta { font-size: 12px; color: #6c757d; margin-bottom: 8px; display: flex; gap: 12px; }
-        .news-summary { color: #495057; line-height: 1.5; font-size: 14px; }
-        .news-stats { display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e9ecef; }
-        .news-stat { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6c757d; cursor: pointer; padding: 8px 12px; border-radius: 16px; }
+        .news-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #e9ecef; transition: all 0.3s; cursor: pointer; }
+        .news-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); border-color: #667eea; }
+        .news-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: #212529; }
+        .news-meta { font-size: 12px; color: #6c757d; margin-bottom: 12px; display: flex; gap: 16px; flex-wrap: wrap; }
+        .news-summary { color: #495057; line-height: 1.5; font-size: 14px; margin-top: 8px; }
+        .news-stats { display: flex; gap: 16px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e9ecef; }
+        .news-stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #6c757d; cursor: pointer; padding: 8px 12px; border-radius: 20px; transition: all 0.2s; }
         .news-stat:hover { background: #f8f9fa; }
         .news-stat.liked { color: #dc3545; }
+        .news-preview-img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 16px; background: #f0f0f0; }
         .skeleton-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid #e0e0e0; }
         .skeleton-title { height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; width: 70%; margin-bottom: 10px; }
         .skeleton-meta { height: 14px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; width: 40%; margin-bottom: 10px; }
         .skeleton-text { height: 12px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; margin-bottom: 6px; }
         .badge-new { background: #dc3545; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 6px; }
+        .news-action-btn { background: #f8f9fa; border: 1px solid #e9ecef; padding: 8px 16px; border-radius: 20px; cursor: pointer; margin-left: 8px; transition: all 0.2s; }
+        .news-action-btn:hover { background: #667eea; color: white; border-color: #667eea; }
         
         /* Модальные окна */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
@@ -133,21 +136,27 @@
         .modal-content input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #e9ecef; border-radius: 12px; }
         .modal-content button { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; }
         .modal-switch { text-align: center; color: #667eea; cursor: pointer; margin-top: 12px; font-size: 13px; }
-        .article-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
+        .article-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 200; align-items: center; justify-content: center; }
         .article-modal.show { display: flex; }
-        .article-modal-content { background: white; border-radius: 20px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 24px; position: relative; }
-        .close-article-modal { position: absolute; top: 12px; right: 20px; font-size: 24px; background: none; border: none; cursor: pointer; }
+        .article-modal-content { background: white; border-radius: 24px; max-width: 800px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 28px; position: relative; }
+        .close-article-modal { position: sticky; top: 0; float: right; font-size: 28px; background: none; border: none; cursor: pointer; color: #666; }
+        .article-content img { max-width: 100%; border-radius: 12px; margin: 16px 0; }
+        .article-content { line-height: 1.7; font-size: 16px; }
+        .article-content h1, .article-content h2, .article-content h3 { margin-top: 24px; margin-bottom: 12px; }
+        .article-content p { margin-bottom: 16px; }
         
         /* Toast */
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #212529; border-radius: 30px; padding: 10px 20px; color: white; font-size: 13px; z-index: 1100; animation: fadeIn 0.3s; }
         
         /* Тёмная тема */
         body.dark .app { background: #1a1a2e; }
-        body.dark .sidebar, body.dark .main-chat, body.dark .chat-header, body.dark .input-area { background: #16213e; border-color: #2c3e50; }
+        body.dark .sidebar, body.dark .main-chat, body.dark .chat-header, body.dark .input-area, body.dark .news-container, body.dark .news-header { background: #16213e; border-color: #2c3e50; }
         body.dark .history-item, body.dark .lang-btn, body.dark .api-btn, body.dark .current-model-badge, body.dark .prompt-chip { background: #1f2a44; color: #e0e0e0; }
-        body.dark .message-content, body.dark .chat-title, body.dark .news-card h3, body.dark .news-summary { color: #e0e0e0; }
+        body.dark .message-content, body.dark .chat-title, body.dark .news-card h3, body.dark .news-summary, body.dark .article-modal-content { color: #e0e0e0; background: #1f2a44; }
         body.dark .news-card, body.dark .modal-content, body.dark .article-modal-content { background: #1f2a44; border-color: #2c3e50; }
         body.dark .news-header, body.dark .skeleton-card { background: #16213e; }
+        body.dark .news-stat:hover { background: #2c3e50; }
+        body.dark .news-action-btn { background: #1f2a44; color: #e0e0e0; border-color: #2c3e50; }
         
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: -280px; height: 100vh; }
@@ -155,6 +164,8 @@
             .menu-toggle { display: block; }
             .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 90; }
             .sidebar-overlay.show { display: block; }
+            .news-card h3 { font-size: 16px; }
+            .article-modal-content { padding: 20px; }
         }
     </style>
 </head>
@@ -442,42 +453,92 @@
         const likesSpan = document.getElementById(`likes-${articleId}`);
         if (likesSpan) likesSpan.textContent = formatNumber(newsStats[articleId].likes);
     };
+    
     function renderNewsList() {
         const newsListDiv = document.getElementById('newsList');
         if (!newsListDiv) return;
         if (allNews.length === 0) { newsListDiv.innerHTML = `<div class="news-empty">${t('no_news')}</div>`; return; }
-        newsListDiv.innerHTML = allNews.map(article => `<div class="news-card" onclick="window.showFullArticle('${article.id}')"><h3>${escapeHtml(article.title)}</h3><div class="news-meta"><span>📅 ${formatDate(article.published_at)}</span></div><div class="news-summary">${escapeHtml((article.summary || article.content || '').substring(0, 150))}...</div><div class="news-stats"><div class="news-stat ${localStorage.getItem(`liked_${article.id}`) === 'true' ? 'liked' : ''}" onclick="event.stopPropagation(); window.likeArticle('${article.id}', this)">❤️ <span id="likes-${article.id}">${formatNumber(newsStats[article.id]?.likes || 0)}</span></div></div></div>`).join('');
+        newsListDiv.innerHTML = allNews.map(article => {
+            let imageHtml = '';
+            if (article.preview_image) {
+                imageHtml = `<img src="${article.preview_image}" class="news-preview-img" loading="lazy" onerror="this.style.display='none'">`;
+            }
+            return `<div class="news-card" onclick="window.showFullArticle('${article.id}')">
+                ${imageHtml}
+                <h3>${escapeHtml(article.title)}</h3>
+                <div class="news-meta"><span>📅 ${formatDate(article.published_at)}</span><span>📰 ${escapeHtml(article.source || 'Cognify AI')}</span></div>
+                <div class="news-summary">${escapeHtml((article.summary || article.content || '').substring(0, 200))}...</div>
+                <div class="news-stats"><div class="news-stat ${localStorage.getItem(`liked_${article.id}`) === 'true' ? 'liked' : ''}" onclick="event.stopPropagation(); window.likeArticle('${article.id}', this)">❤️ <span id="likes-${article.id}">${formatNumber(newsStats[article.id]?.likes || 0)}</span></div><div class="news-stat">🔗 Читать далее →</div></div>
+            </div>`;
+        }).join('');
+        
         const lastVisit = localStorage.getItem('lastNewsVisit') || 0;
         const newCount = allNews.filter(n => new Date(n.published_at) > new Date(lastVisit)).length;
         if (newCount > 0) { document.getElementById('newsBadge').textContent = newCount; document.getElementById('newsBadge').style.display = 'inline'; }
         localStorage.setItem('lastNewsVisit', new Date().toISOString());
     }
-    window.showFullArticle = function(articleId) { const article = allNews.find(a => a.id === articleId); if (!article) return; let modal = document.getElementById('articleModal'); if (!modal) { modal = document.createElement('div'); modal.id = 'articleModal'; modal.className = 'article-modal'; modal.innerHTML = `<div class="article-modal-content"><button class="close-article-modal" onclick="window.closeArticleModal()">✖</button><div id="articleModalBody"></div></div>`; document.body.appendChild(modal); } document.getElementById('articleModalBody').innerHTML = `<h2>${escapeHtml(article.title)}</h2><div style="margin:16px 0">${escapeHtml(article.content || article.summary || '')}</div>`; modal.classList.add('show'); };
-    window.closeArticleModal = function() { const modal = document.getElementById('articleModal'); if (modal) modal.classList.remove('show'); };
     
-    // Моковые новости для демонстрации (так как news.json отсутствует)
-    const MOCK_NEWS = {
-        articles: [
-            { id: "1", title: "GPT-5: новые горизонты искусственного интеллекта", summary: "OpenAI анонсирует революционные изменения в следующем поколении языковой модели.", content: "OpenAI представила дорожную карту разработки GPT-5, обещая значительное улучшение рассуждений и мультимодальности.", published_at: new Date().toISOString() },
-            { id: "2", title: "Google DeepMind: новый ИИ для прогнозирования погоды", summary: "Модель превосходит традиционные методы на 90% по точности.", content: "GraphCast от Google DeepMind показывает впечатляющие результаты в предсказании погоды на 10 дней вперед.", published_at: new Date(Date.now() - 86400000).toISOString() },
-            { id: "3", title: "Европейский AI Act: первые ограничения вступают в силу", summary: "Регулирование генеративных моделей начнется в 2025 году.", content: "Евросоюз утвердил первый в мире комплексный закон об искусственном интеллекте.", published_at: new Date(Date.now() - 172800000).toISOString() }
-        ]
+    window.showFullArticle = function(articleId) { 
+        const article = allNews.find(a => a.id === articleId); 
+        if (!article) return; 
+        
+        let modal = document.getElementById('articleModal'); 
+        if (!modal) { 
+            modal = document.createElement('div'); 
+            modal.id = 'articleModal'; 
+            modal.className = 'article-modal'; 
+            modal.innerHTML = `<div class="article-modal-content"><button class="close-article-modal" onclick="window.closeArticleModal()">✖</button><div id="articleModalBody" class="article-content"></div></div>`; 
+            document.body.appendChild(modal); 
+        } 
+        
+        let contentHtml = `<h2>${escapeHtml(article.title)}</h2>`;
+        
+        if (article.preview_image) {
+            contentHtml += `<div style="margin: 16px 0; text-align: center;"><img src="${article.preview_image}" style="max-width: 100%; border-radius: 12px;" loading="lazy" onerror="this.style.display='none'"></div>`;
+        }
+        
+        if (article.images && article.images.length > 0) {
+            for (const img of article.images.slice(0, 5)) {
+                contentHtml += `<img src="${img}" style="max-width: 100%; border-radius: 12px; margin: 12px 0;" loading="lazy" onerror="this.style.display='none'">`;
+            }
+        }
+        
+        const articleText = article.content || article.summary || '';
+        contentHtml += `<div style="margin-top: 16px;">${marked.parse(articleText)}</div>`;
+        
+        if (article.link && article.link !== '#') {
+            contentHtml += `<div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e9ecef;"><a href="${article.link}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">📖 Читать полную версию на источнике →</a></div>`;
+        }
+        
+        document.getElementById('articleModalBody').innerHTML = contentHtml; 
+        modal.classList.add('show'); 
+    };
+    
+    window.closeArticleModal = function() { 
+        const modal = document.getElementById('articleModal'); 
+        if (modal) modal.classList.remove('show'); 
     };
     
     async function loadNews() {
         const newsListDiv = document.getElementById('newsList');
-        if (newsListDiv) newsListDiv.innerHTML = '<div class="skeleton-card"><div class="skeleton-title"></div><div class="skeleton-meta"></div><div class="skeleton-text"></div></div>';
+        if (newsListDiv) newsListDiv.innerHTML = '<div class="skeleton-card"><div class="skeleton-title"></div><div class="skeleton-meta"></div><div class="skeleton-text"></div><div class="skeleton-text"></div></div>';
         try {
-            const response = await fetch('news.json?t=' + Date.now()).catch(() => null);
+            const response = await fetch('news.json?t=' + Date.now());
             let data;
-            if (response && response.ok) data = await response.json();
-            else data = MOCK_NEWS; // используем моковые новости, если файл не найден
-            allNews = (data.articles || []).map(a => ({ ...a, id: a.id || Date.now() + Math.random().toString(36) }));
+            if (response && response.ok) {
+                data = await response.json();
+                allNews = (data.articles || []).map(a => ({ ...a, id: a.id || Date.now() + Math.random().toString(36) }));
+            } else {
+                throw new Error('No news.json');
+            }
             renderNewsList();
         } catch(error) { 
-            allNews = MOCK_NEWS.articles.map(a => ({ ...a, id: a.id || Date.now() + Math.random().toString(36) }));
+            console.log('Loading demo news');
+            allNews = [
+                { id: "1", title: "Добро пожаловать в Cognify AI News!", summary: "Новости загружаются из RSS-лент Habr, TechCrunch, The Verge и Wired. Полные тексты до 5000 символов с картинками.", content: "Скоро здесь появятся свежие новости об искусственном интеллекте и технологиях. Нажмите 'Обновить' для загрузки.", published_at: new Date().toISOString(), source: "Cognify AI", preview_image: null, images: [] },
+                { id: "2", title: "Как работают новости?", summary: "Агрегатор собирает статьи из RSS-лент, сохраняет полные тексты и изображения.", content: "Каждая новость содержит до 5000 символов текста, все картинки из статьи и ссылку на оригинал.", published_at: new Date(Date.now() - 86400000).toISOString(), source: "Cognify AI", preview_image: null, images: [] }
+            ];
             renderNewsList();
-            if (newsListDiv) newsListDiv.innerHTML = newsListDiv.innerHTML; 
         }
     }
     
